@@ -115,6 +115,22 @@ __PIXEL__
   .shiny:hover{transform:translateY(-2px);box-shadow:0 22px 54px -12px var(--pink-glow);}
   @media (prefers-reduced-motion: reduce){ .shiny{animation:none;} }
 
+  /* ---------- green "buy" CTA, used only on the 3 checkout buttons ---------- */
+  .shiny-buy{
+    background:
+      linear-gradient(180deg, #1c9440 0%, #0f6b2c 100%) padding-box,
+      conic-gradient(from var(--angle), transparent 0%, #6fe39a 8%, #6fe39a 20%, transparent 34%, transparent 100%) border-box;
+    box-shadow:0 18px 42px -14px rgba(15,107,44,.5);
+  }
+  .shiny-buy:hover{transform:translateY(-1px);box-shadow:0 24px 50px -12px rgba(15,107,44,.58);}
+  @keyframes buyPulse{
+    0%,100%{ box-shadow:0 18px 42px -14px rgba(15,107,44,.5); }
+    50%{ box-shadow:0 20px 50px -10px rgba(15,107,44,.7); }
+  }
+  @media (max-width:639px) and (prefers-reduced-motion: no-preference){
+    .shiny.shiny-buy{ animation: spin-border 2.6s linear infinite, buyPulse 3.6s ease-in-out infinite; }
+  }
+
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
     font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
@@ -133,7 +149,24 @@ __PIXEL__
   .hero-inner{max-width:620px;margin:0 auto;text-align:center;}
   .hero h1{font-size:clamp(1.8rem,6.4vw,2.6rem);font-weight:800;line-height:1.18;letter-spacing:-.01em;color:var(--pink-deep);}
   .hero-sub{margin-top:16px;font-size:1.02rem;color:var(--ink-dim);line-height:1.65;}
-  .vsl-wrap{margin:32px auto 0;max-width:400px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 30px 70px -30px var(--pink-glow);}
+  .vsl-wrap{position:relative;margin:32px auto 0;max-width:400px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 30px 70px -30px var(--pink-glow);}
+
+  /* live-viewer badge, anchored to the player wrapper, never the viewport */
+  .viewer-badge{
+    position:absolute;top:12px;left:12px;z-index:5;pointer-events:none;
+    display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(180deg, var(--urgent) 0%, var(--urgent-deep) 100%);
+    border-radius:999px;padding:6px 12px;
+    box-shadow:0 6px 16px -6px rgba(163,24,42,.5);
+  }
+  .viewer-badge span:last-child{color:#fff;font-family:var(--ff-display);font-weight:700;font-size:13px;letter-spacing:.01em;white-space:nowrap;}
+  .live-dot{width:7px;height:7px;flex-shrink:0;border-radius:50%;background:#fff;}
+  @keyframes livePulse{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+  @media (prefers-reduced-motion: no-preference){ .live-dot{ animation: livePulse 1.8s ease-in-out infinite; } }
+  @media (min-width:640px){
+    .viewer-badge{top:16px;left:16px;padding:7px 14px;}
+    .viewer-badge span:last-child{font-size:14px;}
+  }
   .hero-cta-row{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:10px;}
   .hero-cta-note{font-size:.8rem;color:var(--ink-faint);}
 
@@ -331,6 +364,10 @@ __PIXEL__
       <p class="hero-sub reveal">Um acervo com mais de 500 moldes de jogos americanos, sousplats e trilhos para vestir suas mesas com propósito, bom gosto e amor.</p>
 
       <div class="vsl-wrap reveal">
+        <div class="viewer-badge" aria-hidden="true">
+          <span class="live-dot"></span>
+          <span>Assistindo agora</span>
+        </div>
         <vturb-smartplayer id="vid-6a9fbf6b01036ca5f4dd08b5" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 177.77777777777777% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer>
         <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/46297f0e-da56-4b17-a761-6026820d11d1/players/6a9fbf6b01036ca5f4dd08b5/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
       </div>
@@ -504,7 +541,7 @@ __PIXEL__
           <span class="offer-price-installments">12x de R$ 3,08</span>
           <span class="offer-price-cash">ou R$ 37,00 à vista</span>
 
-          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+          <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
 
           <div class="offer-seals">
             <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
@@ -540,7 +577,7 @@ __PIXEL__
         <div>
           <h2>Garantia incondicional de 7 dias</h2>
           <p>Você pode entrar hoje mesmo, acessar o conteúdo e explorar o acervo com total tranquilidade. Se dentro de 7 dias perceber que este material não é para você, basta solicitar o reembolso. Sem burocracia, sem complicação e sem risco para você.</p>
-          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by" style="margin-top:20px"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+          <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142" style="margin-top:20px"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
         </div>
       </div>
     </div>
@@ -575,7 +612,7 @@ __PIXEL__
           <span class="offer-price-installments">12x de R$ 3,08</span>
           <span class="offer-price-cash">ou R$ 37,00 à vista</span>
 
-          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+          <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
 
           <div class="offer-seals">
             <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
