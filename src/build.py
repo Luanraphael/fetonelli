@@ -1,33 +1,37 @@
 #!/usr/bin/env python3
 """
-Rebuilds index.html from src/index.src.html by:
-  1. inlining fonts and images as base64 data URIs (the page is fully
+Rebuilds index.html / v2.html from src/index.src.html by:
+  1. injecting the right Meta Pixel snippet for that specific page (two
+     ad accounts, two pixels, same offer -> two identical pages, each
+     with its own tracking),
+  2. inlining fonts and images as base64 data URIs (the page is fully
      self-contained, with no external requests), then
-  2. wrapping the result in a complete, valid HTML5 document (doctype,
+  3. wrapping the result in a complete, valid HTML5 document (doctype,
      <html lang="pt-BR">, <head> with charset + viewport meta, <body>).
 
-src/index.src.html is kept as a head-less fragment (title + style, then
-body content) — that's the format Claude's Artifact tool expects when
-previewing it directly, since Artifacts wrap fragments in their own
-skeleton automatically. index.html is the real, standalone deploy target
-(GitHub Pages / Vercel / any static host), so it needs the full document
-shell and, critically, the viewport meta tag: without it, mobile browsers
-render at a fake desktop-width viewport and shrink the whole page to fit,
-which breaks every mobile breakpoint in the CSS.
+src/index.src.html is kept as a head-less fragment (title + pixel
+placeholder + style, then body content) — that's the format Claude's
+Artifact tool expects when previewing it directly, since Artifacts wrap
+fragments in their own skeleton automatically. index.html / v2.html are
+the real, standalone deploy targets (GitHub Pages / Vercel / any static
+host), so they need the full document shell and, critically, the
+viewport meta tag: without it, mobile browsers render at a fake
+desktop-width viewport and shrink the whole page to fit, which breaks
+every mobile breakpoint in the CSS.
 
 Usage:
     python3 src/build.py
 
 Run from the repo root. Edit src/index.src.html (or swap files in
-src/img/), then re-run this script to regenerate index.html.
+src/img/, or the src/pixel-*.html snippets), then re-run this script to
+regenerate both index.html and v2.html.
 """
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "src" / "index.src.html"
-OUT = ROOT / "index.html"
 
-TOKENS = {
+IMG_TOKENS = {
     "__INTER_B64__": "src/fonts/inter-latin.b64",
     "__MANROPE_B64__": "src/fonts/manrope-latin.b64",
     "__IMG_PERFIL__": "src/img/perfil.b64",
@@ -49,12 +53,27 @@ TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
+# (output document, pixel snippet file)
+PAGES = [
+    ("index.html", "src/pixel-a.html"),
+    ("v2.html", "src/pixel-b.html"),
+]
+
 HEAD_CLOSE_MARKER = "</style>"
 
 
-def main():
+def build_page(out_rel, pixel_rel):
+    out_path = ROOT / out_rel
+
     fragment = SRC.read_text(encoding="utf-8")
-    for token, rel_path in TOKENS.items():
+
+    pixel_data = (ROOT / pixel_rel).read_text(encoding="utf-8").strip()
+    count = fragment.count("__PIXEL__")
+    if count < 1:
+        raise SystemExit(f"expected at least 1 occurrence of '__PIXEL__', found {count}")
+    fragment = fragment.replace("__PIXEL__", pixel_data)
+
+    for token, rel_path in IMG_TOKENS.items():
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
         count = fragment.count(token)
         if count < 1:
@@ -62,7 +81,7 @@ def main():
         fragment = fragment.replace(token, data)
 
     split_at = fragment.index(HEAD_CLOSE_MARKER) + len(HEAD_CLOSE_MARKER)
-    head_part = fragment[:split_at]   # <title>...</title>\n<style>...</style>
+    head_part = fragment[:split_at]   # <title>...</title>\n<pixel>\n<style>...</style>
     body_part = fragment[split_at:]   # everything after: svg sprite, main, footer, script
 
     document = (
@@ -78,8 +97,13 @@ def main():
         "</body>\n"
         "</html>\n"
     )
-    OUT.write_text(document, encoding="utf-8")
-    print(f"wrote {OUT} ({len(document):,} bytes)")
+    out_path.write_text(document, encoding="utf-8")
+    print(f"wrote {out_path} ({len(document):,} bytes)")
+
+
+def main():
+    for out_rel, pixel_rel in PAGES:
+        build_page(out_rel, pixel_rel)
 
 
 if __name__ == "__main__":
