@@ -53,18 +53,19 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
-# (output document, pixel snippet file, checkout URL for this page's 3
-# buy buttons — index.html and v2.html run different ad accounts and,
-# as of this round, different checkout links too)
+# (output document, pixel snippet file, checkout URL, VSL snippet file)
+# index.html and v2.html run different ad accounts, so each now gets its
+# own tracking pixel, its own checkout link, and its own VTurb VSL
+# (separate video = separate view/watch-time metrics per funnel).
 PAGES = [
-    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142"),
-    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/191300/offer/S0U1Jk"),
+    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142", "src/vsl-a.html"),
+    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/191300/offer/S0U1Jk", "src/vsl-b.html"),
 ]
 
 HEAD_CLOSE_MARKER = "</style>"
 
 
-def build_page(out_rel, pixel_rel, checkout_url):
+def build_page(out_rel, pixel_rel, checkout_url, vsl_rel):
     out_path = ROOT / out_rel
 
     fragment = SRC.read_text(encoding="utf-8")
@@ -79,6 +80,12 @@ def build_page(out_rel, pixel_rel, checkout_url):
     if count < 1:
         raise SystemExit(f"expected at least 1 occurrence of '__CHECKOUT__', found {count}")
     fragment = fragment.replace("__CHECKOUT__", checkout_url)
+
+    vsl_data = (ROOT / vsl_rel).read_text(encoding="utf-8").strip()
+    count = fragment.count("__VSL__")
+    if count != 1:
+        raise SystemExit(f"expected exactly 1 occurrence of '__VSL__', found {count}")
+    fragment = fragment.replace("__VSL__", vsl_data)
 
     for token, rel_path in IMG_TOKENS.items():
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
@@ -109,8 +116,8 @@ def build_page(out_rel, pixel_rel, checkout_url):
 
 
 def main():
-    for out_rel, pixel_rel, checkout_url in PAGES:
-        build_page(out_rel, pixel_rel, checkout_url)
+    for out_rel, pixel_rel, checkout_url, vsl_rel in PAGES:
+        build_page(out_rel, pixel_rel, checkout_url, vsl_rel)
 
 
 if __name__ == "__main__":
