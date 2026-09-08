@@ -58,8 +58,8 @@ IMG_TOKENS = {
 # own tracking pixel, its own checkout link, and its own VTurb VSL
 # (separate video = separate view/watch-time metrics per funnel).
 PAGES = [
-    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142", "src/vsl-a.html"),
-    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/191300/offer/S0U1Jk", "src/vsl-b.html"),
+    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/redirect/314477", "src/vsl-a.html"),
+    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/redirect/314478", "src/vsl-b.html"),
 ]
 
 HEAD_CLOSE_MARKER = "</style>"
