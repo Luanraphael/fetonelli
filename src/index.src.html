@@ -1,0 +1,678 @@
+<title>500 Moldes de Mesa Posta</title>
+
+<style>
+  @font-face{
+    font-family:'Manrope Take';
+    font-style:normal;
+    font-weight:200 800;
+    font-display:swap;
+    src:url(data:font/woff2;base64,__MANROPE_B64__) format('woff2');
+  }
+  @font-face{
+    font-family:'Inter Take';
+    font-style:normal;
+    font-weight:100 900;
+    font-display:swap;
+    src:url(data:font/woff2;base64,__INTER_B64__) format('woff2');
+  }
+
+  :root{
+    --bg:#fffaf8;
+    --bg-wash:#fdf0ee;
+    --panel:#ffffff;
+    --panel-line: rgba(178,96,122,.16);
+    --panel-line-hover: rgba(178,96,122,.4);
+    --ink:#3d2b30;
+    --ink-dim:#7d616a;
+    --ink-faint:#a98d95;
+    --pink:#c2718a;
+    --pink-deep:#8f4a63;
+    --pink-glow: rgba(194,113,138,.4);
+    --pink-pale:#f7e3e8;
+    --gold:#b98a4e;
+    --urgent:#e0273f;
+    --urgent-deep:#a3182a;
+    --container: 1120px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --topbar-h: 64px;
+    --ff-display:'Manrope Take','Manrope',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+    --ff-body:'Inter Take','Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  @media (min-width:640px){ :root{ --topbar-h: 48px; } }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  html,body{background:var(--bg);}
+  body{
+    margin:0;
+    padding-top:var(--topbar-h);
+    color:var(--ink);
+    font-family:var(--ff-body);
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth;} }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+  ul{margin:0;padding:0;list-style:none;}
+  h1,h2,h3,h4{font-family:var(--ff-display);margin:0;color:var(--ink);text-wrap:balance;}
+  p{margin:0;}
+
+  .icon{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+  .icon-solid{fill:currentColor;stroke:none;}
+
+  .wrap{max-width:var(--container);margin:0 auto;padding-inline:22px;position:relative;}
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1;transform:none;transition:none;} }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;height:var(--topbar-h);
+    background:linear-gradient(135deg, var(--urgent-deep), var(--urgent));
+    display:flex;align-items:center;justify-content:center;
+    padding:6px 16px;text-align:center;
+    box-shadow:0 6px 22px -8px rgba(163,24,42,.55);
+  }
+  .topbar p{
+    color:#fff;font-family:var(--ff-display);font-weight:800;font-size:.82rem;letter-spacing:.01em;
+    line-height:1.25;
+  }
+  .topbar strong{font-weight:800;}
+  @media (min-width:640px){ .topbar p{font-size:.92rem;} }
+  @keyframes topbar-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.82; } }
+  @media (prefers-reduced-motion: no-preference){
+    .topbar p{ animation: topbar-pulse 2.4s ease-in-out infinite; }
+  }
+
+  /* ---------- shiny CTA (rotating conic border) ---------- */
+  @property --angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+  @keyframes spin-border{ to{ --angle:360deg; } }
+  .shiny{
+    --angle:0deg;
+    position:relative;isolation:isolate;overflow:hidden;
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    padding:1.1rem 2.4rem;border-radius:999px;border:2px solid transparent;
+    background:
+      linear-gradient(#8f4a63,#8f4a63) padding-box,
+      conic-gradient(from var(--angle), transparent 0%, var(--pink) 8%, var(--pink) 20%, transparent 34%, transparent 100%) border-box;
+    color:#fff;font-family:var(--ff-display);font-weight:800;font-size:1rem;letter-spacing:.01em;
+    animation:spin-border 2.6s linear infinite;
+    box-shadow:0 18px 46px -14px var(--pink-glow);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .shiny:hover{transform:translateY(-2px);box-shadow:0 22px 54px -12px var(--pink-glow);}
+  @media (prefers-reduced-motion: reduce){ .shiny{animation:none;} }
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--pink-deep);
+  }
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pink);}
+
+  section{position:relative;z-index:1;padding:64px 0;}
+  section.tight{padding:44px 0;}
+  .section-head{max-width:640px;margin:0 auto 36px;text-align:center;}
+  .section-head h2{font-size:clamp(1.5rem,4.4vw,2.15rem);font-weight:800;letter-spacing:-.01em;line-height:1.2;color:var(--ink);}
+  .section-head p{margin-top:12px;color:var(--ink-dim);font-size:.98rem;line-height:1.6;}
+
+  /* ================= HERO ================= */
+  .hero{padding-top:40px;background:linear-gradient(180deg, var(--bg-wash) 0%, var(--bg) 60%);}
+  .hero-inner{max-width:620px;margin:0 auto;text-align:center;}
+  .hero h1{font-size:clamp(1.8rem,6.4vw,2.6rem);font-weight:800;line-height:1.18;letter-spacing:-.01em;color:var(--pink-deep);}
+  .hero-sub{margin-top:16px;font-size:1.02rem;color:var(--ink-dim);line-height:1.65;}
+  .vsl-wrap{margin:32px auto 0;max-width:400px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 30px 70px -30px var(--pink-glow);}
+  .hero-cta-row{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .hero-cta-note{font-size:.8rem;color:var(--ink-faint);}
+
+  .hero-badges{margin:36px auto 0;max-width:460px;display:flex;flex-direction:column;gap:12px;text-align:left;}
+  .hero-badge{
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--panel-line);background:var(--panel);
+    border-radius:var(--radius-md);padding:13px 16px;
+  }
+  .hero-badge .ico{
+    width:30px;height:30px;flex-shrink:0;border-radius:50%;
+    background:var(--pink-pale);color:var(--pink-deep);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .hero-badge .ico .icon{width:15px;height:15px;stroke-width:2.6;}
+  .hero-badge span{font-size:.9rem;font-weight:600;color:var(--ink);}
+
+  /* ================= MOLDES ================= */
+  .molde-list{display:flex;flex-direction:column;gap:26px;max-width:820px;margin:0 auto;}
+  .molde-pair{
+    display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;
+    border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-lg);
+    padding:22px;box-shadow:0 20px 46px -30px rgba(143,74,99,.28);
+    transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  .molde-pair:hover{border-color:var(--panel-line-hover);box-shadow:0 24px 56px -26px var(--pink-glow);transform:translateY(-2px);}
+  @media (max-width:620px){ .molde-pair{grid-template-columns:1fr;gap:14px;padding:16px;} }
+  .molde-block{text-align:center;}
+  .molde-block img{width:100%;height:auto;border-radius:var(--radius-sm);}
+  .molde-block .molde-tag{
+    display:block;margin-top:10px;font-family:var(--ff-display);font-weight:700;font-size:.7rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .molde-block.is-result .molde-tag{color:var(--pink-deep);}
+  .molde-block.is-result img{background:linear-gradient(160deg, var(--pink-pale), #fff);border-radius:var(--radius-md);padding:10px;}
+
+  /* ================= BÔNUS ================= */
+  .bonus-grid{margin-top:8px;display:flex;flex-direction:column;gap:22px;max-width:760px;margin-left:auto;margin-right:auto;}
+  .bonus-card{
+    display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center;
+    border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-lg);
+    padding:22px;box-shadow:0 20px 46px -32px rgba(143,74,99,.3);
+    transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  .bonus-card:hover{border-color:var(--panel-line-hover);box-shadow:0 24px 56px -26px var(--pink-glow);transform:translateY(-2px);}
+  @media (max-width:640px){ .bonus-card{grid-template-columns:1fr;text-align:center;padding:20px;gap:14px;} }
+  .bonus-card img{width:100%;height:auto;}
+  .bonus-body h3{font-size:1.02rem;font-weight:800;line-height:1.3;color:var(--ink);}
+  .bonus-body p{margin-top:8px;color:var(--ink-dim);font-size:.9rem;line-height:1.55;}
+  .bonus-price{margin-top:14px;display:flex;align-items:baseline;gap:10px;}
+  @media (max-width:640px){ .bonus-price{justify-content:center;} }
+  .bonus-price .old{font-size:.86rem;color:var(--ink-faint);text-decoration:line-through;}
+  .bonus-price .free{font-family:var(--ff-display);font-weight:800;font-size:1.05rem;color:var(--pink-deep);}
+
+  /* ================= COMPOSIÇÃO DO ACERVO ================= */
+  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:620px;margin:0 auto;}
+  @media (max-width:420px){ .stats-grid{grid-template-columns:1fr;} }
+  .stat-card{
+    border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-md);
+    padding:20px 16px;text-align:center;
+    box-shadow:0 16px 36px -26px rgba(143,74,99,.3);
+  }
+  .stat-num{display:block;font-family:var(--ff-display);font-weight:800;font-size:2.1rem;color:var(--pink-deep);letter-spacing:-.01em;}
+  .stat-label{display:block;margin-top:4px;font-size:.82rem;font-weight:600;color:var(--ink-dim);line-height:1.35;}
+  .stats-total{margin:22px auto 0;max-width:480px;text-align:center;color:var(--ink-dim);font-size:.92rem;line-height:1.6;}
+  .stats-total strong{color:var(--pink-deep);}
+
+  /* ================= OFERTA (CTA) ================= */
+  .offer{
+    border:1px solid var(--panel-line);background:linear-gradient(165deg, #fff 0%, var(--pink-pale) 120%);
+    border-radius:var(--radius-lg);padding:32px 22px;max-width:520px;margin:0 auto;
+    box-shadow:0 30px 80px -34px var(--pink-glow);
+    text-align:center;
+  }
+  .offer h2{font-size:clamp(1.35rem,5vw,1.7rem);font-weight:800;color:var(--pink-deep);}
+  .offer-sub{margin-top:10px;color:var(--ink-dim);font-size:.94rem;line-height:1.6;}
+
+  .offer-checklist{margin-top:26px;text-align:left;}
+  .offer-checklist-title{text-align:center;font-family:var(--ff-display);font-weight:800;font-size:.96rem;color:var(--pink-deep);margin-bottom:14px;}
+  .offer-checklist ul{display:flex;flex-direction:column;gap:10px;}
+  .offer-checklist li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.45;}
+  .offer-checklist .ico{
+    width:20px;height:20px;flex-shrink:0;margin-top:1px;border-radius:50%;
+    background:var(--pink-pale);color:var(--pink-deep);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .offer-checklist .ico .icon{width:11px;height:11px;stroke-width:3;}
+
+  .offer-mock{width:100%;max-width:300px;margin:24px auto 0;}
+  .offer-mock img{width:100%;height:auto;border-radius:var(--radius-md);box-shadow:0 20px 50px -22px rgba(143,74,99,.4);}
+  .offer-mock .placeholder{
+    aspect-ratio:3/4;border:1.5px dashed var(--panel-line-hover);border-radius:var(--radius-md);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    color:var(--ink-faint);background:#fff;padding:20px;
+  }
+
+  .offer-card{
+    margin-top:24px;background:#fff;border:1px solid var(--panel-line);border-radius:var(--radius-lg);
+    padding:26px 22px;
+  }
+  .offer-price-lead{font-size:.88rem;color:var(--ink-faint);}
+  .offer-price-old{color:var(--urgent);font-weight:700;text-decoration:line-through;}
+  @keyframes price-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.5; } }
+  @media (prefers-reduced-motion: no-preference){ .offer-price-old{ animation:price-pulse 1.8s ease-in-out infinite; } }
+  .offer-divider{border:none;border-top:1.5px dashed var(--panel-line-hover);margin:14px 0;}
+  .offer-price-installments{
+    display:block;font-family:var(--ff-display);font-weight:800;
+    font-size:clamp(1.9rem,8vw,2.4rem);color:var(--pink-deep);letter-spacing:-.01em;line-height:1.1;
+  }
+  .offer-price-cash{display:block;margin-top:6px;font-size:.94rem;color:var(--ink-dim);font-weight:600;}
+  .offer-card .shiny{margin-top:20px;width:100%;}
+  .offer-seals{margin-top:18px;padding-top:16px;border-top:1.5px dashed var(--panel-line-hover);display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
+  .offer-seal{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--ink-dim);max-width:88px;text-align:center;line-height:1.25;}
+  .offer-seal .icon{width:16px;height:16px;color:var(--pink-deep);}
+
+  /* ================= QUEM SOU EU ================= */
+  .about{max-width:560px;margin:0 auto;text-align:center;}
+  .about-photo-wrap{
+    width:132px;height:132px;margin:0 auto 18px;border-radius:50%;padding:5px;
+    background:linear-gradient(135deg, var(--pink), var(--pink-pale));
+    box-shadow:0 20px 50px -18px var(--pink-glow);
+  }
+  .about-photo{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;}
+  .about-handle{margin-top:2px;font-family:var(--ff-display);font-weight:700;font-size:.92rem;color:var(--pink-deep);}
+  .about-text{margin-top:16px;color:var(--ink-dim);font-size:.96rem;line-height:1.75;}
+
+  /* ================= GARANTIA ================= */
+  .guarantee{
+    display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;
+    max-width:560px;margin:0 auto;
+    border:1px solid var(--panel-line);border-radius:var(--radius-lg);
+    background:linear-gradient(160deg, var(--pink-pale), #fff 70%);
+    padding:36px 26px;
+  }
+  .guarantee-badge{
+    width:76px;height:76px;border-radius:50%;flex-shrink:0;
+    background:#fff;border:1px solid var(--panel-line-hover);color:var(--pink-deep);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 14px 34px -16px var(--pink-glow);
+  }
+  .guarantee-badge .icon{width:32px;height:32px;stroke-width:1.5;}
+  .guarantee h2{font-size:clamp(1.3rem,4.4vw,1.6rem);color:var(--pink-deep);}
+  .guarantee p{color:var(--ink-dim);font-size:.94rem;line-height:1.65;}
+
+  /* ================= FAQ ================= */
+  .faq{max-width:660px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+  .faq-item{border:1px solid var(--panel-line);border-radius:var(--radius-md);background:var(--panel);overflow:hidden;}
+  .faq-q{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:16px 18px;text-align:left;font-weight:700;font-size:.92rem;color:var(--ink);
+  }
+  .faq-q .icon{width:16px;height:16px;color:var(--pink-deep);transition:transform .3s ease;flex-shrink:0;}
+  .faq-item[data-open="true"] .faq-q .icon{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .faq-a p{padding:0 18px 18px;color:var(--ink-dim);font-size:.88rem;line-height:1.6;}
+
+  /* ================= FOOTER ================= */
+  footer{position:relative;z-index:1;border-top:1px solid var(--panel-line);padding:32px 0;background:var(--bg-wash);}
+  .footer-grid{display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center;}
+  @media (min-width:640px){ .footer-grid{flex-direction:row;align-items:flex-end;justify-content:space-between;text-align:left;} }
+  .footer-col{display:flex;flex-direction:column;gap:4px;}
+  .footer-col-links{align-items:center;gap:8px;}
+  @media (min-width:640px){ .footer-col-links{align-items:flex-end;} }
+  .footer-brand{font-family:var(--ff-display);font-weight:800;font-size:.98rem;color:var(--pink-deep);}
+  .footer-copy{font-size:.76rem;color:var(--ink-faint);}
+  .footer-insta{font-size:.84rem;font-weight:700;color:var(--pink-deep);transition:color .2s ease;}
+  .footer-insta:hover{color:var(--pink);}
+  .footer-legal{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--ink-faint);}
+  .footer-legal a{color:var(--ink-dim);transition:color .2s ease;}
+  .footer-legal a:hover{color:var(--pink-deep);}
+
+  .center{text-align:center;}
+</style>
+
+<div class="topbar" role="note">
+  <p>Desconto especial ativo apenas hoje <strong>08 de Setembro</strong>!</p>
+</div>
+
+<!-- icon sprite -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5.2-3.4 8.6-7 10-3.6-1.4-7-4.8-7-10V6l7-3z"/><path d="M9 12.2l2 2 4-4.2"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><polygon class="icon-solid" points="3,11.5 21,3 12.5,21 10.5,13.5 3,11.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle class="icon-solid" cx="8.5" cy="8.5" r="1.4"/><path d="M21 15.5l-5.2-5.2-4 4-2.8-2.8L3 17.5"/></symbol>
+</svg>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <h1 class="reveal">500 Moldes de Mesa Posta para Anfitriãs de Sucesso.</h1>
+      <p class="hero-sub reveal">Um acervo com mais de 500 moldes de jogos americanos, sousplats e trilhos para vestir suas mesas com propósito, bom gosto e amor.</p>
+
+      <div class="vsl-wrap reveal">
+        <vturb-smartplayer id="vid-6a9fbf6b01036ca5f4dd08b5" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 177.77777777777777% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer>
+        <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/46297f0e-da56-4b17-a761-6026820d11d1/players/6a9fbf6b01036ca5f4dd08b5/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
+      </div>
+
+      <div class="hero-cta-row reveal">
+        <a class="shiny" href="#oferta"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+        <span class="hero-cta-note">Acesso liberado na hora, direto no WhatsApp e no email.</span>
+      </div>
+
+      <div class="hero-badges reveal">
+        <div class="hero-badge">
+          <span class="ico"><svg class="icon"><use href="#i-check"/></svg></span>
+          <span>Acesso vitalício</span>
+        </div>
+        <div class="hero-badge">
+          <span class="ico"><svg class="icon"><use href="#i-send"/></svg></span>
+          <span>Envio imediato no WhatsApp e no email</span>
+        </div>
+        <div class="hero-badge">
+          <span class="ico"><svg class="icon"><use href="#i-image"/></svg></span>
+          <span>Mais de 500 moldes organizados por categoria</span>
+        </div>
+        <div class="hero-badge">
+          <span class="ico"><svg class="icon"><use href="#i-shield"/></svg></span>
+          <span>Garantia incondicional de 7 dias</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MOLDES ================= -->
+  <section id="moldes">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow" style="margin-bottom:12px">Prévia do acervo</span>
+        <h2>Veja apenas alguns dos mais de 500 moldes por dentro</h2>
+      </div>
+
+      <div class="molde-list">
+        <div class="molde-pair reveal">
+          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE1__" alt="Molde do sousplat com fleur de lis" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
+          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT1__" alt="Sousplat pronto feito com o molde fleur de lis" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
+        </div>
+        <div class="molde-pair reveal">
+          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE2__" alt="Molde do sousplat em formato de flor de lótus" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
+          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT2__" alt="Sousplat pronto feito com o molde de lótus" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
+        </div>
+        <div class="molde-pair reveal">
+          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE3__" alt="Molde do sousplat com grinalda de flores" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
+          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT3__" alt="Sousplat pronto feito com o molde de grinalda de flores" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
+        </div>
+        <div class="molde-pair reveal">
+          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE4__" alt="Molde do sousplat redondo com barrado duplo" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
+          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT4__" alt="Sousplat pronto feito com o molde redondo de barrado duplo" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
+        </div>
+        <div class="molde-pair reveal">
+          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE5__" alt="Molde do sousplat em formato de mandala floral" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
+          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT5__" alt="Sousplat pronto feito com o molde de mandala floral" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMPOSIÇÃO DO ACERVO ================= -->
+  <section id="composicao" class="tight">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Você receberá exatamente:</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <span class="stat-num">211</span>
+          <span class="stat-label">Moldes de Sousplats</span>
+        </div>
+        <div class="stat-card reveal">
+          <span class="stat-num">113</span>
+          <span class="stat-label">Moldes de Trilhos</span>
+        </div>
+        <div class="stat-card reveal">
+          <span class="stat-num">96</span>
+          <span class="stat-label">Moldes de Jogos Americanos</span>
+        </div>
+        <div class="stat-card reveal">
+          <span class="stat-num">80</span>
+          <span class="stat-label">Moldes de Guardanapos e Porta-Guardanapos</span>
+        </div>
+      </div>
+      <p class="stats-total reveal">Um total de <strong>500 moldes</strong> reunidos em um único acervo, prontos para você usar quando e como quiser.</p>
+    </div>
+  </section>
+
+  <!-- ================= BÔNUS ================= -->
+  <section id="bonus">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Bônus Exclusivos</h2>
+        <p>Além dos mais de 500 moldes, você também vai receber bônus especiais liberados junto com o seu acesso.</p>
+      </div>
+
+      <div class="bonus-grid">
+        <div class="bonus-card reveal">
+          <img src="data:image/png;base64,__IMG_BONUS1__" alt="Bônus 1: passo a passo em vídeo de como executar" width="700" height="700" loading="lazy">
+          <div class="bonus-body">
+            <h3>Bônus 1 — Passo a passo em vídeo de como executar</h3>
+            <p>Aprenda hoje mesmo desde a impressão dos moldes até a execução final dos seus novos sousplats, trilhos e jogos americanos, com um passo a passo visual, simples e fácil de acompanhar.</p>
+            <div class="bonus-price"><span class="old">De R$ 47,90</span><span class="free">Grátis</span></div>
+          </div>
+        </div>
+        <div class="bonus-card reveal">
+          <img src="data:image/png;base64,__IMG_BONUS2__" alt="Bônus 2: lista completa de materiais e explicação prática" width="700" height="700" loading="lazy">
+          <div class="bonus-body">
+            <h3>Bônus 2 — Lista completa de materiais e explicação prática</h3>
+            <p>Tenha acesso à lista completa dos materiais que você precisa para começar, além de uma explicação prática e objetiva para entender exatamente o que usar em cada etapa.</p>
+            <div class="bonus-price"><span class="old">De R$ 27,90</span><span class="free">Grátis</span></div>
+          </div>
+        </div>
+        <div class="bonus-card reveal">
+          <img src="data:image/png;base64,__IMG_BONUS3__" alt="Bônus 3: mais de 100 moldes de trilhos natalinos" width="700" height="700" loading="lazy">
+          <div class="bonus-body">
+            <h3>Bônus 3 — +100 Moldes de Trilhos Natalinos</h3>
+            <p>Receba uma seleção especial com mais 100 moldes de trilhos temáticos natalinos para criar mesas ainda mais encantadoras em datas especiais e ocasiões de fim de ano.</p>
+            <div class="bonus-price"><span class="old">De R$ 37,90</span><span class="free">Grátis</span></div>
+          </div>
+        </div>
+        <div class="bonus-card reveal">
+          <img src="data:image/png;base64,__IMG_BONUS4__" alt="Bônus 4: mais de 100 moldes de jogos americanos para datas especiais" width="700" height="700" loading="lazy">
+          <div class="bonus-body">
+            <h3>Bônus 4 — +100 Moldes de Jogos Americanos para Datas Especiais</h3>
+            <p>Mais 100 moldes extras de jogos americanos pensados para diferentes ocasiões especiais, trazendo ainda mais variedade para você compor mesas lindas e marcantes.</p>
+            <div class="bonus-price"><span class="old">De R$ 37,90</span><span class="free">Grátis</span></div>
+          </div>
+        </div>
+        <div class="bonus-card reveal">
+          <img src="data:image/png;base64,__IMG_BONUS5__" alt="Bônus 5: mais de 50 moldes de guardanapos e porta-guardanapos" width="700" height="700" loading="lazy">
+          <div class="bonus-body">
+            <h3>Bônus 5 — +50 Moldes de Guardanapos e Porta-Guardanapos</h3>
+            <p>Amplie ainda mais o seu acervo com 50 moldes extras de guardanapos e porta-guardanapos para deixar a composição das suas mesas ainda mais delicada, completa e elegante.</p>
+            <div class="bonus-price"><span class="old">De R$ 27,90</span><span class="free">Grátis</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OFERTA ================= -->
+  <section id="oferta">
+    <div class="wrap">
+      <div class="offer reveal">
+        <h2>Comece hoje o seu acervo de Mesa Posta</h2>
+        <p class="offer-sub">Receba acesso imediato aos mais de 500 moldes + bônus especiais por um valor promocional.</p>
+
+        <div class="offer-checklist">
+          <p class="offer-checklist-title">Você recebe hoje:</p>
+          <ul>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> + 500 Moldes de Mesa Posta para Anfitriãs de Sucesso</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 1 — Passo a passo em vídeo de como executar</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 2 — Lista completa de materiais e explicação prática</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 3 — +100 Moldes de Trilhos Natalinos</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 4 — +100 Moldes de Jogos Americanos para Datas Especiais</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 5 — +50 Moldes de Guardanapos e Porta-Guardanapos</li>
+          </ul>
+        </div>
+
+        <div class="offer-mock">
+          <img src="data:image/jpeg;base64,__IMG_MOCKUPCTA__" alt="Mockup do acervo completo: 500 moldes de Mesa Posta e os 5 bônus exclusivos" width="900" height="750" loading="lazy">
+        </div>
+
+        <div class="offer-card">
+          <p class="offer-price-lead">De <span class="offer-price-old">R$ 297,00</span> por:</p>
+          <hr class="offer-divider">
+          <span class="offer-price-installments">12x de R$ 3,08</span>
+          <span class="offer-price-cash">ou R$ 37,00 à vista</span>
+
+          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+
+          <div class="offer-seals">
+            <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
+            <span class="offer-seal"><svg class="icon"><use href="#i-check"/></svg> Satisfação Garantida</span>
+            <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUEM SOU EU ================= -->
+  <section id="quem-sou-eu">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Quem sou eu</h2>
+      </div>
+      <div class="about reveal">
+        <div class="about-photo-wrap">
+          <img class="about-photo" src="data:image/jpeg;base64,__IMG_PERFIL__" alt="Fernanda Antonella, @fe.tonella" width="500" height="500" loading="lazy">
+        </div>
+        <p class="about-handle">@fe.tonella</p>
+        <p class="about-text">Muito prazer! Eu sou Fernanda Antonella, também conhecida no Instagram como @fe.tonella. Sou apaixonada pela arte de receber e pela beleza que existe em uma mesa posta feita com carinho, propósito e bom gosto. Ao longo do tempo, fui reunindo referências, experiências e moldes que me ajudaram a transformar ideias em composições lindas e especiais. E agora, meu objetivo é compartilhar tudo isso com outras mulheres que também desejam vestir suas mesas com mais amor, delicadeza e personalidade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GARANTIA ================= -->
+  <section id="garantia" class="tight">
+    <div class="wrap">
+      <div class="guarantee reveal">
+        <span class="guarantee-badge"><svg class="icon"><use href="#i-shield"/></svg></span>
+        <div>
+          <h2>Garantia incondicional de 7 dias</h2>
+          <p>Você pode entrar hoje mesmo, acessar o conteúdo e explorar o acervo com total tranquilidade. Se dentro de 7 dias perceber que este material não é para você, basta solicitar o reembolso. Sem burocracia, sem complicação e sem risco para você.</p>
+          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by" style="margin-top:20px"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= OFERTA (REPETIÇÃO) ================= -->
+  <section id="oferta-2">
+    <div class="wrap">
+      <div class="offer reveal">
+        <h2>Comece hoje o seu acervo de Mesa Posta</h2>
+        <p class="offer-sub">Receba acesso imediato aos mais de 500 moldes + bônus especiais por um valor promocional.</p>
+
+        <div class="offer-checklist">
+          <p class="offer-checklist-title">Você recebe hoje:</p>
+          <ul>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> + 500 Moldes de Mesa Posta para Anfitriãs de Sucesso</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 1 — Passo a passo em vídeo de como executar</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 2 — Lista completa de materiais e explicação prática</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 3 — +100 Moldes de Trilhos Natalinos</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 4 — +100 Moldes de Jogos Americanos para Datas Especiais</li>
+            <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> Bônus 5 — +50 Moldes de Guardanapos e Porta-Guardanapos</li>
+          </ul>
+        </div>
+
+        <div class="offer-mock">
+          <img src="data:image/jpeg;base64,__IMG_MOCKUPCTA__" alt="Mockup do acervo completo: 500 moldes de Mesa Posta e os 5 bônus exclusivos" width="900" height="750" loading="lazy">
+        </div>
+
+        <div class="offer-card">
+          <p class="offer-price-lead">De <span class="offer-price-old">R$ 297,00</span> por:</p>
+          <hr class="offer-divider">
+          <span class="offer-price-installments">12x de R$ 3,08</span>
+          <span class="offer-price-cash">ou R$ 37,00 à vista</span>
+
+          <a class="shiny" href="https://payfast.greenn.com.br/2tbv3by"><svg class="icon"><use href="#i-check"/></svg> Quero garantir meu acesso agora</a>
+
+          <div class="offer-seals">
+            <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
+            <span class="offer-seal"><svg class="icon"><use href="#i-check"/></svg> Satisfação Garantida</span>
+            <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Perguntas frequentes</h2>
+      </div>
+
+      <div class="faq" id="faqList">
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>Como vou receber o acesso aos moldes?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>Você receberá o acesso de forma imediata após a compra, diretamente no seu email e também pelo WhatsApp, para facilitar ainda mais o início do seu acesso.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>Os moldes servem para quais tipos de peças?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>O acervo inclui moldes de jogos americanos, sousplats, trilhos e outros complementos de mesa posta, tudo organizado por categoria para facilitar sua navegação.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>Eu preciso saber costurar ou desenhar para conseguir fazer?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>Não. A proposta do material é justamente facilitar o processo. Você terá os moldes prontos e ainda contará com bônus explicativos para entender melhor a execução.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>O acesso é por quanto tempo?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>O acesso é vitalício. Depois de comprar, o material é seu para acessar quando quiser, no seu tempo.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>E se eu comprar e não gostar?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>Você terá 7 dias de garantia incondicional. Se não gostar ou achar que não faz sentido para você, poderá pedir o reembolso dentro desse prazo.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-q"><span>Os bônus já estão incluídos no valor de R$ 37,00?</span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          <div class="faq-a"><p>Sim. Ao entrar hoje, você recebe não apenas os mais de 500 moldes, mas também todos os bônus descritos na página, sem custo adicional.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-col">
+      <p class="footer-brand">Fe Antonella</p>
+      <p class="footer-copy">© 2026 Todos os direitos reservados.</p>
+    </div>
+    <div class="footer-col footer-col-links">
+      <a class="footer-insta" href="https://instagram.com/fe.tonella" target="_blank" rel="noopener">Instagram · @fe.tonella</a>
+      <div class="footer-legal">
+        <a href="#">Termos de Uso</a>
+        <span aria-hidden="true">·</span>
+        <a href="#">Política de Privacidade</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // reveal on scroll
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    targets.forEach(function(t){ io.observe(t); });
+  } else {
+    targets.forEach(function(t){ t.classList.add('is-visible'); });
+  }
+
+  // FAQ accordion
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function(item){
+    var q = item.querySelector('.faq-q');
+    var a = item.querySelector('.faq-a');
+    q.addEventListener('click', function(){
+      var isOpen = item.getAttribute('data-open') === 'true';
+      items.forEach(function(other){
+        other.setAttribute('data-open','false');
+        other.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if (!isOpen){
+        item.setAttribute('data-open','true');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+})();
+</script>
