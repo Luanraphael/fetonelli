@@ -53,16 +53,18 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
-# (output document, pixel snippet file)
+# (output document, pixel snippet file, checkout URL for this page's 3
+# buy buttons — index.html and v2.html run different ad accounts and,
+# as of this round, different checkout links too)
 PAGES = [
-    ("index.html", "src/pixel-a.html"),
-    ("v2.html", "src/pixel-b.html"),
+    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/2tbv3by/offer/hHJI7A?ch_id=143142"),
+    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/191300/offer/S0U1Jk"),
 ]
 
 HEAD_CLOSE_MARKER = "</style>"
 
 
-def build_page(out_rel, pixel_rel):
+def build_page(out_rel, pixel_rel, checkout_url):
     out_path = ROOT / out_rel
 
     fragment = SRC.read_text(encoding="utf-8")
@@ -72,6 +74,11 @@ def build_page(out_rel, pixel_rel):
     if count < 1:
         raise SystemExit(f"expected at least 1 occurrence of '__PIXEL__', found {count}")
     fragment = fragment.replace("__PIXEL__", pixel_data)
+
+    count = fragment.count("__CHECKOUT__")
+    if count < 1:
+        raise SystemExit(f"expected at least 1 occurrence of '__CHECKOUT__', found {count}")
+    fragment = fragment.replace("__CHECKOUT__", checkout_url)
 
     for token, rel_path in IMG_TOKENS.items():
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
@@ -102,8 +109,8 @@ def build_page(out_rel, pixel_rel):
 
 
 def main():
-    for out_rel, pixel_rel in PAGES:
-        build_page(out_rel, pixel_rel)
+    for out_rel, pixel_rel, checkout_url in PAGES:
+        build_page(out_rel, pixel_rel, checkout_url)
 
 
 if __name__ == "__main__":
