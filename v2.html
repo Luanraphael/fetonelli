@@ -386,9 +386,9 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       <p class="hero-sub reveal">Um acervo com mais de 500 moldes de jogos americanos, sousplats e trilhos para vestir suas mesas com propósito, bom gosto e amor.</p>
 
       <div class="vsl-wrap reveal">
-        <div class="viewer-badge" aria-hidden="true">
+        <div class="viewer-badge">
           <span class="live-dot"></span>
-          <span>Assistindo agora</span>
+          <span><strong id="liveCount">508</strong> assistindo agora</span>
         </div>
         <vturb-smartplayer id="vid-6a9fbf6b01036ca5f4dd08b5" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 177.77777777777777% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer>
         <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/46297f0e-da56-4b17-a761-6026820d11d1/players/6a9fbf6b01036ca5f4dd08b5/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
@@ -737,6 +737,22 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       }
     });
   });
+
+  // live viewer count on the VSL badge: wanders within 508-513, one small
+  // step at a time, so it reads as active rather than a fixed number
+  var liveCountEl = document.getElementById('liveCount');
+  if (liveCountEl){
+    var LIVE_MIN = 508, LIVE_MAX = 513;
+    var liveCount = LIVE_MIN + Math.floor(Math.random() * (LIVE_MAX - LIVE_MIN + 1));
+    liveCountEl.textContent = liveCount;
+    function tickLiveCount(){
+      var step = Math.floor(Math.random() * 3) - 1; // -1, 0 or 1
+      liveCount = Math.min(LIVE_MAX, Math.max(LIVE_MIN, liveCount + step));
+      liveCountEl.textContent = liveCount;
+      setTimeout(tickLiveCount, 3500 + Math.random() * 3000);
+    }
+    setTimeout(tickLiveCount, 3500 + Math.random() * 3000);
+  }
 })();
 </script>
 </body>
