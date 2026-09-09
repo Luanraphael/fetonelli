@@ -90,6 +90,7 @@ __PIXEL__
     line-height:1.25;
   }
   .topbar strong{font-weight:800;}
+  .topbar-hl{color:#ffd54a;}
   @media (min-width:640px){ .topbar p{font-size:.92rem;} }
   @keyframes topbar-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.82; } }
   @media (prefers-reduced-motion: no-preference){
@@ -338,11 +339,31 @@ __PIXEL__
   .footer-legal a{color:var(--ink-dim);transition:color .2s ease;}
   .footer-legal a:hover{color:var(--pink-deep);}
 
+  /* ================= v2-ONLY: VSL-gated reveal ================= */
+  /* Everything below is a no-op on index.html (no .page-v2 on <body>).
+     On v2.html, .gate elements start hidden and body has no topbar
+     padding reserved; both are released together once the VSL reaches
+     02:10 and JS adds .v2-revealed to <body>. */
+  body.page-v2:not(.v2-revealed) .gate{display:none;}
+  body.page-v2:not(.v2-revealed){padding-top:0;}
+  body.page-v2.v2-revealed .gate-anim{animation:gateFadeIn .5s ease both;}
+  @keyframes gateFadeIn{
+    from{opacity:0;transform:translateY(12px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    body.page-v2.v2-revealed .gate-anim{animation:none;}
+  }
+
+  /* v2 hero: video-only first moment, no subheadline, extra breathing room */
+  body.page-v2 .hero{padding-top:56px;}
+  body.page-v2 .hero h1{font-size:clamp(1.5rem,5.2vw,2.15rem);line-height:1.32;}
+
   .center{text-align:center;}
 </style>
 
-<div class="topbar" role="note">
-  <p>Desconto especial ativo apenas hoje <strong>08 de Setembro</strong>!</p>
+<div class="topbar gate gate-anim" role="note">
+  <p>Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09</p>
 </div>
 
 <!-- icon sprite -->
@@ -360,8 +381,8 @@ __PIXEL__
   <!-- ================= HERO ================= -->
   <section class="hero">
     <div class="wrap hero-inner">
-      <h1 class="reveal">500 Moldes de Mesa Posta para Anfitriãs de Sucesso.</h1>
-      <p class="hero-sub reveal">Um acervo com mais de 500 moldes de jogos americanos, sousplats e trilhos para vestir suas mesas com propósito, bom gosto e amor.</p>
+      <h1 class="reveal">__HEADLINE__</h1>
+      __SUBHEAD__
 
       <div class="vsl-wrap reveal">
         <div class="viewer-badge">
@@ -371,12 +392,12 @@ __PIXEL__
         __VSL__
       </div>
 
-      <div class="hero-cta-row reveal">
+      <div class="hero-cta-row reveal gate">
         <a class="shiny shiny-buy" href="#oferta"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
         <span class="hero-cta-note">Acesso liberado na hora, direto no WhatsApp e no email.</span>
       </div>
 
-      <div class="hero-badges reveal">
+      <div class="hero-badges reveal gate">
         <div class="hero-badge">
           <span class="ico"><svg class="icon"><use href="#i-check"/></svg></span>
           <span>Acesso vitalício</span>
@@ -396,6 +417,8 @@ __PIXEL__
       </div>
     </div>
   </section>
+
+  <div class="gate gate-anim">
 
   <!-- ================= MOLDES ================= -->
   <section id="moldes">
@@ -659,9 +682,11 @@ __PIXEL__
     </div>
   </section>
 
+  </div>
+
 </main>
 
-<footer>
+<footer class="gate gate-anim">
   <div class="wrap footer-grid">
     <div class="footer-col">
       <p class="footer-brand">Fe Antonella</p>
@@ -732,3 +757,4 @@ __PIXEL__
   }
 })();
 </script>
+__GATE_SCRIPT__

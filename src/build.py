@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
 Rebuilds index.html / v2.html from src/index.src.html by:
-  1. injecting the right Meta Pixel snippet for that specific page (two
-     ad accounts, two pixels, same offer -> two identical pages, each
-     with its own tracking),
+  1. injecting the right per-page snippets (tracking pixel, checkout URL,
+     VTurb VSL, hero headline/subheadline, VSL-gate script, <body> class
+     -- two ad accounts, two funnels, same base page, each with its own
+     tracking, its own video and, on v2, a delayed reveal tied to real
+     VSL watch time),
   2. inlining fonts and images as base64 data URIs (the page is fully
      self-contained, with no external requests), then
   3. wrapping the result in a complete, valid HTML5 document (doctype,
      <html lang="pt-BR">, <head> with charset + viewport meta, <body>).
 
 src/index.src.html is kept as a head-less fragment (title + pixel
-placeholder + style, then body content) — that's the format Claude's
+placeholder + style, then body content) -- that's the format Claude's
 Artifact tool expects when previewing it directly, since Artifacts wrap
 fragments in their own skeleton automatically. index.html / v2.html are
 the real, standalone deploy targets (GitHub Pages / Vercel / any static
@@ -23,8 +25,8 @@ Usage:
     python3 src/build.py
 
 Run from the repo root. Edit src/index.src.html (or swap files in
-src/img/, or the src/pixel-*.html snippets), then re-run this script to
-regenerate both index.html and v2.html.
+src/img/, or any of the src/*-a.html / src/*-b.html per-page snippets),
+then re-run this script to regenerate both index.html and v2.html.
 """
 import pathlib
 
@@ -53,50 +55,84 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
-# (output document, pixel snippet file, checkout URL, VSL snippet file)
-# index.html and v2.html run different ad accounts, so each now gets its
-# own tracking pixel, its own checkout link, and its own VTurb VSL
-# (separate video = separate view/watch-time metrics per funnel).
+# index.html and v2.html run different ad accounts, so each gets its own
+# tracking pixel, its own checkout link and its own VTurb VSL (separate
+# video = separate view/watch-time metrics per funnel). v2 additionally
+# runs a different headline (no subheadline) and a VSL-gated reveal: the
+# rest of the page + the topbar only appear once that page's own VSL
+# reaches 02:10 of real watch time (gate-b.html); index.html's gate
+# snippet is a no-op comment and its body carries no extra class, so it
+# keeps opening fully from the first paint, like before.
 PAGES = [
-    ("index.html", "src/pixel-a.html", "https://payfast.greenn.com.br/redirect/314477", "src/vsl-a.html"),
-    ("v2.html", "src/pixel-b.html", "https://payfast.greenn.com.br/redirect/314478", "src/vsl-b.html"),
+    {
+        "out": "index.html",
+        "body_class": "",
+        "pixel": "src/pixel-a.html",
+        "checkout_url": "https://payfast.greenn.com.br/redirect/314477",
+        "vsl": "src/vsl-a.html",
+        "headline": "500 Moldes de Mesa Posta para Anfitriãs de Sucesso.",
+        "subhead": "src/subhead-a.html",
+        "gate_script": "src/gate-a.html",
+    },
+    {
+        "out": "v2.html",
+        "body_class": "page-v2",
+        "pixel": "src/pixel-b.html",
+        "checkout_url": "https://payfast.greenn.com.br/redirect/314478",
+        "vsl": "src/vsl-b.html",
+        "headline": (
+            "Este vídeo é apenas para mulheres que amam Mesa Posta e "
+            "sabem que ser Anfitriã vai muito além de pratos e talheres."
+        ),
+        "subhead": "src/subhead-b.html",
+        "gate_script": "src/gate-b.html",
+    },
 ]
 
 HEAD_CLOSE_MARKER = "</style>"
 
 
-def build_page(out_rel, pixel_rel, checkout_url, vsl_rel):
-    out_path = ROOT / out_rel
+def _inject(fragment, token, value, exactly=None):
+    count = fragment.count(token)
+    if exactly is not None:
+        if count != exactly:
+            raise SystemExit(f"expected exactly {exactly} occurrence(s) of {token!r}, found {count}")
+    elif count < 1:
+        raise SystemExit(f"expected at least 1 occurrence of {token!r}, found {count}")
+    return fragment.replace(token, value)
+
+
+def build_page(page):
+    out_path = ROOT / page["out"]
 
     fragment = SRC.read_text(encoding="utf-8")
 
-    pixel_data = (ROOT / pixel_rel).read_text(encoding="utf-8").strip()
-    count = fragment.count("__PIXEL__")
-    if count < 1:
-        raise SystemExit(f"expected at least 1 occurrence of '__PIXEL__', found {count}")
-    fragment = fragment.replace("__PIXEL__", pixel_data)
+    pixel_data = (ROOT / page["pixel"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__PIXEL__", pixel_data)
 
-    count = fragment.count("__CHECKOUT__")
-    if count < 1:
-        raise SystemExit(f"expected at least 1 occurrence of '__CHECKOUT__', found {count}")
-    fragment = fragment.replace("__CHECKOUT__", checkout_url)
+    fragment = _inject(fragment, "__CHECKOUT__", page["checkout_url"])
 
-    vsl_data = (ROOT / vsl_rel).read_text(encoding="utf-8").strip()
-    count = fragment.count("__VSL__")
-    if count != 1:
-        raise SystemExit(f"expected exactly 1 occurrence of '__VSL__', found {count}")
-    fragment = fragment.replace("__VSL__", vsl_data)
+    vsl_data = (ROOT / page["vsl"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__VSL__", vsl_data, exactly=1)
+
+    fragment = _inject(fragment, "__HEADLINE__", page["headline"], exactly=1)
+
+    subhead_data = (ROOT / page["subhead"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__SUBHEAD__", subhead_data, exactly=1)
+
+    gate_data = (ROOT / page["gate_script"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__GATE_SCRIPT__", gate_data, exactly=1)
 
     for token, rel_path in IMG_TOKENS.items():
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
-        count = fragment.count(token)
-        if count < 1:
-            raise SystemExit(f"expected at least 1 occurrence of {token!r}, found {count}")
-        fragment = fragment.replace(token, data)
+        fragment = _inject(fragment, token, data)
 
     split_at = fragment.index(HEAD_CLOSE_MARKER) + len(HEAD_CLOSE_MARKER)
     head_part = fragment[:split_at]   # <title>...</title>\n<pixel>\n<style>...</style>
-    body_part = fragment[split_at:]   # everything after: svg sprite, main, footer, script
+    body_part = fragment[split_at:]   # everything after: topbar, svg sprite, main, footer, scripts
+
+    body_class = page.get("body_class", "")
+    body_open_tag = f'<body class="{body_class}">' if body_class else "<body>"
 
     document = (
         "<!DOCTYPE html>\n"
@@ -106,7 +142,7 @@ def build_page(out_rel, pixel_rel, checkout_url, vsl_rel):
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
         f"{head_part}\n"
         "</head>\n"
-        "<body>\n"
+        f"{body_open_tag}\n"
         f"{body_part.strip()}\n"
         "</body>\n"
         "</html>\n"
@@ -116,8 +152,8 @@ def build_page(out_rel, pixel_rel, checkout_url, vsl_rel):
 
 
 def main():
-    for out_rel, pixel_rel, checkout_url, vsl_rel in PAGES:
-        build_page(out_rel, pixel_rel, checkout_url, vsl_rel)
+    for page in PAGES:
+        build_page(page)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,74 @@
+<!--
+  v2.html only: libera o resto da página exatamente quando a VSL atinge
+  02:10 (130s) de reprodução REAL — não é um timer de permanência na
+  página. Não altera o player VTurb (script, tracking, container): só
+  lê o tempo de reprodução por três caminhos, o primeiro que responder
+  já basta.
+-->
+<script>
+(function(){
+  var GATE_SECONDS = 130; // 02:10
+  var body = document.body;
+  var unlocked = false;
+
+  function unlock(){
+    if (unlocked) return;
+    unlocked = true;
+    try { sessionStorage.setItem('v2SalesUnlocked', 'true'); } catch (e) {}
+    body.classList.add('v2-revealed');
+  }
+
+  // já desbloqueado nesta sessão (ex: refresh depois do pitch)? libera direto.
+  try {
+    if (sessionStorage.getItem('v2SalesUnlocked') === 'true'){
+      unlock();
+      return;
+    }
+  } catch (e) {}
+
+  function handleTime(t){
+    if (typeof t === 'number' && !isNaN(t) && t >= GATE_SECONDS) unlock();
+  }
+
+  // ---- caminho 1: API oficial do player (smartplayer.instances) ----
+  var pollAttempts = 0;
+  var pollTimer = setInterval(function(){
+    if (unlocked){ clearInterval(pollTimer); return; }
+    pollAttempts++;
+    if (window.smartplayer && window.smartplayer.instances && window.smartplayer.instances.length){
+      clearInterval(pollTimer);
+      var instance = window.smartplayer.instances[0];
+      try {
+        instance.on('timeupdate', function(){
+          if (instance.video) handleTime(instance.video.currentTime);
+        });
+      } catch (e) {}
+      if (instance.video) handleTime(instance.video.currentTime);
+      return;
+    }
+    if (pollAttempts > 120) clearInterval(pollTimer); // ~60s, aí sobra pros outros caminhos
+  }, 500);
+
+  // ---- caminho 2: evento nativo no próprio elemento vturb-smartplayer ----
+  var playerEl = document.querySelector('vturb-smartplayer');
+  if (playerEl){
+    playerEl.addEventListener('timeupdate', function(ev){
+      var t = (ev && ev.detail && typeof ev.detail.currentTime === 'number')
+        ? ev.detail.currentTime
+        : (typeof playerEl.currentTime === 'number' ? playerEl.currentTime
+           : (playerEl.video ? playerEl.video.currentTime : undefined));
+      handleTime(t);
+    });
+
+    // ---- caminho 3: <video> real, quando o player injeta um no DOM ----
+    var videoWatcher = new MutationObserver(function(){
+      var videoEl = playerEl.querySelector('video');
+      if (videoEl){
+        videoWatcher.disconnect();
+        videoEl.addEventListener('timeupdate', function(){ handleTime(videoEl.currentTime); });
+      }
+    });
+    videoWatcher.observe(playerEl, { childList: true, subtree: true });
+  }
+})();
+</script>
