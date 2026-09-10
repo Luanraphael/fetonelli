@@ -74,7 +74,7 @@ PAGES = [
         "out": "index.html",
         "body_class": "page-v2",
         "pixel": "src/pixel-a.html",
-        "checkout_url": "https://payfast.greenn.com.br/redirect/314477",
+        "checkout_url": "https://pay.lowify.com.br/checkout.php?product_id=gODlv2",
         "vsl": "src/vsl-a.html",
         "headline": GATED_HEADLINE,
         "subhead": "src/subhead-empty.html",
