@@ -366,11 +366,12 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
   .footer-legal a{color:var(--ink-dim);transition:color .2s ease;}
   .footer-legal a:hover{color:var(--pink-deep);}
 
-  /* ================= v2-ONLY: VSL-gated reveal ================= */
-  /* Everything below is a no-op on index.html (no .page-v2 on <body>).
-     On v2.html, .gate elements start hidden and body has no topbar
-     padding reserved; both are released together once the VSL reaches
-     02:10 and JS adds .v2-revealed to <body>. */
+  /* ================= VSL-gated reveal (both pages) ================= */
+  /* .gate elements start hidden and body has no topbar padding reserved;
+     both are released together once that page's own VSL reaches 02:10
+     and JS adds .v2-revealed to <body>. class name kept as "page-v2"
+     for continuity even though, as of the winning A/B test, index.html
+     runs the exact same gated experience as v2.html. */
   body.page-v2:not(.v2-revealed) .gate{display:none;}
   body.page-v2:not(.v2-revealed){padding-top:0;}
   body.page-v2.v2-revealed .gate-anim{animation:gateFadeIn .5s ease both;}
@@ -382,14 +383,14 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
     body.page-v2.v2-revealed .gate-anim{animation:none;}
   }
 
-  /* v2 hero: video-only first moment, no subheadline, extra breathing room */
+  /* video-only first moment, no subheadline, extra breathing room */
   body.page-v2 .hero{padding-top:56px;}
   body.page-v2 .hero h1{font-size:clamp(1.5rem,5.2vw,2.15rem);line-height:1.32;}
 
   .center{text-align:center;}
 </style>
 </head>
-<body>
+<body class="page-v2">
 <div class="topbar gate gate-anim" role="note">
   <p>Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09</p>
 </div>
@@ -409,8 +410,8 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
   <!-- ================= HERO ================= -->
   <section class="hero">
     <div class="wrap hero-inner">
-      <h1 class="reveal">500 Moldes de Mesa Posta para Anfitriãs de Sucesso.</h1>
-      <p class="hero-sub reveal">Um acervo com mais de 500 moldes de jogos americanos, sousplats e trilhos para vestir suas mesas com propósito, bom gosto e amor.</p>
+      <h1 class="reveal">Este vídeo é apenas para mulheres que amam Mesa Posta e sabem que ser Anfitriã vai muito além de pratos e talheres.</h1>
+      <!-- sem subheadline neste primeiro momento (VSL-only) -->
 
       <div class="vsl-wrap reveal">
         <div class="viewer-badge">
@@ -786,6 +787,82 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
   }
 })();
 </script>
-<!-- index.html: sem gate de VSL, página abre inteira desde o carregamento -->
+<!--
+  Libera o resto da página exatamente quando a VSL atinge 02:10 (130s) de
+  reprodução REAL — não é um timer de permanência na página. Compartilhado
+  pelas duas páginas (index.html e v2.html), cada uma com sua própria VSL.
+  Não altera o player VTurb (script, tracking, container): só lê o tempo
+  de reprodução por três caminhos, o primeiro que responder já basta.
+-->
+<script>
+(function(){
+  var GATE_SECONDS = 130; // 02:10
+  var body = document.body;
+  var unlocked = false;
+  // chave por página (não por domínio), pra index.html e v2.html não
+  // compartilharem o mesmo estado de desbloqueio dentro da mesma sessão
+  var STORAGE_KEY = 'salesUnlocked:' + (location.pathname || '/');
+
+  function unlock(){
+    if (unlocked) return;
+    unlocked = true;
+    try { sessionStorage.setItem(STORAGE_KEY, 'true'); } catch (e) {}
+    body.classList.add('v2-revealed');
+  }
+
+  // já desbloqueado nesta sessão (ex: refresh depois do pitch)? libera direto.
+  try {
+    if (sessionStorage.getItem(STORAGE_KEY) === 'true'){
+      unlock();
+      return;
+    }
+  } catch (e) {}
+
+  function handleTime(t){
+    if (typeof t === 'number' && !isNaN(t) && t >= GATE_SECONDS) unlock();
+  }
+
+  // ---- caminho 1: API oficial do player (smartplayer.instances) ----
+  var pollAttempts = 0;
+  var pollTimer = setInterval(function(){
+    if (unlocked){ clearInterval(pollTimer); return; }
+    pollAttempts++;
+    if (window.smartplayer && window.smartplayer.instances && window.smartplayer.instances.length){
+      clearInterval(pollTimer);
+      var instance = window.smartplayer.instances[0];
+      try {
+        instance.on('timeupdate', function(){
+          if (instance.video) handleTime(instance.video.currentTime);
+        });
+      } catch (e) {}
+      if (instance.video) handleTime(instance.video.currentTime);
+      return;
+    }
+    if (pollAttempts > 120) clearInterval(pollTimer); // ~60s, aí sobra pros outros caminhos
+  }, 500);
+
+  // ---- caminho 2: evento nativo no próprio elemento vturb-smartplayer ----
+  var playerEl = document.querySelector('vturb-smartplayer');
+  if (playerEl){
+    playerEl.addEventListener('timeupdate', function(ev){
+      var t = (ev && ev.detail && typeof ev.detail.currentTime === 'number')
+        ? ev.detail.currentTime
+        : (typeof playerEl.currentTime === 'number' ? playerEl.currentTime
+           : (playerEl.video ? playerEl.video.currentTime : undefined));
+      handleTime(t);
+    });
+
+    // ---- caminho 3: <video> real, quando o player injeta um no DOM ----
+    var videoWatcher = new MutationObserver(function(){
+      var videoEl = playerEl.querySelector('video');
+      if (videoEl){
+        videoWatcher.disconnect();
+        videoEl.addEventListener('timeupdate', function(){ handleTime(videoEl.currentTime); });
+      }
+    });
+    videoWatcher.observe(playerEl, { childList: true, subtree: true });
+  }
+})();
+</script>
 </body>
 </html>

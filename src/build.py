@@ -25,7 +25,7 @@ Usage:
     python3 src/build.py
 
 Run from the repo root. Edit src/index.src.html (or swap files in
-src/img/, or any of the src/*-a.html / src/*-b.html per-page snippets),
+src/img/, or any of the per-page snippets referenced in PAGES below),
 then re-run this script to regenerate both index.html and v2.html.
 """
 import pathlib
@@ -55,24 +55,30 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
-# index.html and v2.html run different ad accounts, so each gets its own
+# index.html and v2.html run different ad accounts, so each keeps its own
 # tracking pixel, its own checkout link and its own VTurb VSL (separate
-# video = separate view/watch-time metrics per funnel). v2 additionally
-# runs a different headline (no subheadline) and a VSL-gated reveal: the
-# rest of the page + the topbar only appear once that page's own VSL
-# reaches 02:10 of real watch time (gate-b.html); index.html's gate
-# snippet is a no-op comment and its body carries no extra class, so it
-# keeps opening fully from the first paint, like before.
+# video = separate view/watch-time metrics per funnel). Both pages now
+# share the exact same lead experience (this is the A/B winner: the VSL
+# retained 40% more engagement gated this way): the same headline, no
+# subheadline, and a VSL-gated reveal where the rest of the page + the
+# topbar only appear once that page's own VSL reaches 02:10 of real watch
+# time (src/gate-vsl.html, shared -- it keys its sessionStorage flag off
+# location.pathname so the two pages don't share unlock state).
+GATED_HEADLINE = (
+    "Este vídeo é apenas para mulheres que amam Mesa Posta e "
+    "sabem que ser Anfitriã vai muito além de pratos e talheres."
+)
+
 PAGES = [
     {
         "out": "index.html",
-        "body_class": "",
+        "body_class": "page-v2",
         "pixel": "src/pixel-a.html",
         "checkout_url": "https://payfast.greenn.com.br/redirect/314477",
         "vsl": "src/vsl-a.html",
-        "headline": "500 Moldes de Mesa Posta para Anfitriãs de Sucesso.",
-        "subhead": "src/subhead-a.html",
-        "gate_script": "src/gate-a.html",
+        "headline": GATED_HEADLINE,
+        "subhead": "src/subhead-empty.html",
+        "gate_script": "src/gate-vsl.html",
     },
     {
         "out": "v2.html",
@@ -80,12 +86,9 @@ PAGES = [
         "pixel": "src/pixel-b.html",
         "checkout_url": "https://payfast.greenn.com.br/redirect/314478",
         "vsl": "src/vsl-b.html",
-        "headline": (
-            "Este vídeo é apenas para mulheres que amam Mesa Posta e "
-            "sabem que ser Anfitriã vai muito além de pratos e talheres."
-        ),
-        "subhead": "src/subhead-b.html",
-        "gate_script": "src/gate-b.html",
+        "headline": GATED_HEADLINE,
+        "subhead": "src/subhead-empty.html",
+        "gate_script": "src/gate-vsl.html",
     },
 ]
 
