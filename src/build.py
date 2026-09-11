@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
 Rebuilds index.html / v2.html from src/index.src.html by:
-  1. injecting the right per-page snippets (tracking pixel, checkout URL,
-     VTurb VSL, hero headline/subheadline, VSL-gate script, <body> class
-     -- two ad accounts, two funnels, same base page, each with its own
-     tracking, its own video and, on v2, a delayed reveal tied to real
-     VSL watch time),
+  1. injecting the right per-page snippets (tracking pixel, checkout
+     URL(s), VTurb VSL, hero headline/subheadline, topbar text, offer
+     section(s), VSL-gate script, <body> class),
   2. inlining fonts and images as base64 data URIs (the page is fully
      self-contained, with no external requests), then
   3. wrapping the result in a complete, valid HTML5 document (doctype,
@@ -56,39 +54,48 @@ IMG_TOKENS = {
 }
 
 # index.html and v2.html run different ad accounts, so each keeps its own
-# tracking pixel, its own checkout link and its own VTurb VSL (separate
-# video = separate view/watch-time metrics per funnel). Both pages now
-# share the exact same lead experience (this is the A/B winner: the VSL
-# retained 40% more engagement gated this way): the same headline, no
-# subheadline, and a VSL-gated reveal where the rest of the page + the
-# topbar only appear once that page's own VSL reaches 02:10 of real watch
-# time (src/gate-vsl.html, shared -- it keys its sessionStorage flag off
-# location.pathname so the two pages don't share unlock state).
-GATED_HEADLINE = (
-    "Este vídeo é apenas para mulheres que amam Mesa Posta e "
-    "sabem que ser Anfitriã vai muito além de pratos e talheres."
-)
-
+# tracking pixel and its own VTurb VSL (separate video = separate
+# view/watch-time metrics per funnel).
+#
+# The two pages now run genuinely different experiences (as of this
+# round of edits):
+#   - index.html: the winning A/B setup -- VSL-gated reveal (body class
+#     "gated"), single-price offer section, one checkout link.
+#   - v2.html: back to "mini VSL + full sales page, always visible"
+#     (body class "flat", no gate script), original-era headline +
+#     subheadline, a new upper price teaser under the VSL, and a
+#     two-tier offer section (R$10 moldes-only vs R$19,90 tudo) with
+#     its own pair of checkout links. body class "flat" also hides the
+#     old hero-badges list, which the new price teaser replaces.
 PAGES = [
     {
         "out": "index.html",
-        "body_class": "page-v2",
+        "body_class": "gated",
         "pixel": "src/pixel-a.html",
         "checkout_url": "https://pay.lowify.com.br/checkout.php?product_id=gODlv2",
         "vsl": "src/vsl-a.html",
-        "headline": GATED_HEADLINE,
+        "headline": (
+            "Este vídeo é apenas para mulheres que amam Mesa Posta e "
+            "sabem que ser Anfitriã vai muito além de pratos e talheres."
+        ),
         "subhead": "src/subhead-empty.html",
+        "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
+        "offer_block": "src/offer-index.html",
         "gate_script": "src/gate-vsl.html",
     },
     {
         "out": "v2.html",
-        "body_class": "page-v2",
+        "body_class": "flat",
         "pixel": "src/pixel-b.html",
-        "checkout_url": "https://payfast.greenn.com.br/redirect/314478",
+        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm",  # ticket 19,90 -- also the guarantee-section CTA target
+        "checkout_url_10": "https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv",
+        "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm",
         "vsl": "src/vsl-b.html",
-        "headline": GATED_HEADLINE,
-        "subhead": "src/subhead-empty.html",
-        "gate_script": "src/gate-vsl.html",
+        "headline": "500 Moldes de Mesa Posta na Talagarça para Anfitriãs de Sucesso.",
+        "subhead": "src/subhead-v2.html",
+        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
+        "offer_block": "src/offer-v2.html",
+        "gate_script": "src/gate-none.html",
     },
 ]
 
@@ -113,18 +120,33 @@ def build_page(page):
     pixel_data = (ROOT / page["pixel"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__PIXEL__", pixel_data)
 
-    fragment = _inject(fragment, "__CHECKOUT__", page["checkout_url"])
-
-    vsl_data = (ROOT / page["vsl"]).read_text(encoding="utf-8").strip()
-    fragment = _inject(fragment, "__VSL__", vsl_data, exactly=1)
-
     fragment = _inject(fragment, "__HEADLINE__", page["headline"], exactly=1)
 
     subhead_data = (ROOT / page["subhead"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__SUBHEAD__", subhead_data, exactly=1)
 
-    gate_data = (ROOT / page["gate_script"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__TOPBAR__", page["topbar"], exactly=1)
+
+    vsl_data = (ROOT / page["vsl"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__VSL__", vsl_data, exactly=1)
+
+    offer_data = (ROOT / page["offer_block"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=2)
+
+    gate_rel = page.get("gate_script")
+    gate_data = (ROOT / gate_rel).read_text(encoding="utf-8").strip() if gate_rel else ""
     fragment = _inject(fragment, "__GATE_SCRIPT__", gate_data, exactly=1)
+
+    # checkout links: __CHECKOUT__ is the "default" target (the guarantee
+    # section button on both pages; also the only checkout token used
+    # inside offer-index.html). __CHECKOUT_10__ / __CHECKOUT_19__ only
+    # exist inside offer-v2.html, so they're only injected for pages that
+    # declare them.
+    fragment = _inject(fragment, "__CHECKOUT__", page["checkout_url"])
+    if "checkout_url_10" in page:
+        fragment = _inject(fragment, "__CHECKOUT_10__", page["checkout_url_10"], exactly=2)
+    if "checkout_url_19" in page:
+        fragment = _inject(fragment, "__CHECKOUT_19__", page["checkout_url_19"], exactly=2)
 
     for token, rel_path in IMG_TOKENS.items():
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()

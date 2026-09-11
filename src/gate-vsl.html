@@ -1,24 +1,22 @@
 <!--
-  Libera o resto da página exatamente quando a VSL atinge 02:10 (130s) de
-  reprodução REAL — não é um timer de permanência na página. Compartilhado
-  pelas duas páginas (index.html e v2.html), cada uma com sua própria VSL.
-  Não altera o player VTurb (script, tracking, container): só lê o tempo
-  de reprodução por três caminhos, o primeiro que responder já basta.
+  index.html only: libera o resto da página exatamente quando a VSL
+  atinge 02:10 (130s) de reprodução REAL — não é um timer de permanência
+  na página. Não altera o player VTurb (script, tracking, container): só
+  lê o tempo de reprodução por três caminhos, o primeiro que responder
+  já basta.
 -->
 <script>
 (function(){
   var GATE_SECONDS = 130; // 02:10
   var body = document.body;
   var unlocked = false;
-  // chave por página (não por domínio), pra index.html e v2.html não
-  // compartilharem o mesmo estado de desbloqueio dentro da mesma sessão
   var STORAGE_KEY = 'salesUnlocked:' + (location.pathname || '/');
 
   function unlock(){
     if (unlocked) return;
     unlocked = true;
     try { sessionStorage.setItem(STORAGE_KEY, 'true'); } catch (e) {}
-    body.classList.add('v2-revealed');
+    body.classList.add('revealed');
   }
 
   // já desbloqueado nesta sessão (ex: refresh depois do pitch)? libera direto.
