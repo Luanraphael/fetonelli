@@ -367,18 +367,11 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   .offer-checklist li.is-out{color:var(--ink-faint);text-decoration:line-through;}
   .offer-checklist .ico-out{background:#fde3e3;color:var(--urgent);}
 
-  .offer-upgrade-hint{
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    margin:18px auto;max-width:360px;text-align:center;
-    font-family:var(--ff-display);font-weight:700;font-size:.86rem;color:var(--pink-deep);
-  }
-  .offer-upgrade-hint .icon{width:16px;height:16px;transform:rotate(180deg);}
-
   /* the featured, "sophisticated" R$19,90 card: gold/pink gradient border,
      a shimmering ribbon and a touch more lift than the basic card */
   .offer-featured{
     position:relative;isolation:isolate;
-    margin-top:6px;padding-top:38px;
+    margin-top:28px;padding-top:58px;
     border:2px solid transparent;
     background:
       linear-gradient(165deg, #fff 0%, var(--pink-pale) 120%) padding-box,
@@ -387,7 +380,7 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   }
   @media (min-width:480px){ .offer-featured{transform:scale(1.02);} }
   .offer-ribbon{
-    position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    position:absolute;top:20px;left:50%;transform:translateX(-50%);
     display:inline-flex;align-items:center;gap:6px;
     background:linear-gradient(120deg, #b98a4e, #e3bd7d, #b98a4e);
     background-size:200% auto;
@@ -396,6 +389,7 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
     padding:7px 16px;border-radius:999px;white-space:nowrap;
     box-shadow:0 10px 24px -8px rgba(185,138,78,.6);
   }
+  .offer-featured h2{margin-top:6px;}
   @media (prefers-reduced-motion: no-preference){ .offer-ribbon{ animation:ribbon-shine 3s linear infinite; } }
   @keyframes ribbon-shine{ to{ background-position:200% center; } }
 
@@ -711,11 +705,6 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
     </div>
   </div>
 
-  <div class="offer-upgrade-hint">
-    <svg class="icon"><use href="#i-chevron"/></svg>
-    <span>Por só mais R$ 9,90 você leva tudo</span>
-  </div>
-
   <!-- TICKET COMPLETO — R$19,90, moldes + todos os bônus -->
   <div class="offer offer-featured">
     <span class="offer-ribbon">Mais Completo</span>
@@ -823,11 +812,6 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
         <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
       </div>
     </div>
-  </div>
-
-  <div class="offer-upgrade-hint">
-    <svg class="icon"><use href="#i-chevron"/></svg>
-    <span>Por só mais R$ 9,90 você leva tudo</span>
   </div>
 
   <!-- TICKET COMPLETO — R$19,90, moldes + todos os bônus -->
