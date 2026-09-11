@@ -24,15 +24,15 @@ __PIXEL__
     --bg:#fffaf8;
     --bg-wash:#fdf0ee;
     --panel:#ffffff;
-    --panel-line: rgba(178,96,122,.16);
-    --panel-line-hover: rgba(178,96,122,.4);
+    --panel-line: rgba(255,45,122,.16);
+    --panel-line-hover: rgba(255,45,122,.45);
     --ink:#3d2b30;
     --ink-dim:#7d616a;
     --ink-faint:#a98d95;
-    --pink:#c2718a;
-    --pink-deep:#8f4a63;
-    --pink-glow: rgba(194,113,138,.4);
-    --pink-pale:#f7e3e8;
+    --pink:#ff2d7a;
+    --pink-deep:#b0125a;
+    --pink-glow: rgba(255,45,122,.45);
+    --pink-pale:#ffe0ec;
     --gold:#b98a4e;
     --urgent:#e0273f;
     --urgent-deep:#a3182a;
@@ -106,7 +106,7 @@ __PIXEL__
     display:inline-flex;align-items:center;justify-content:center;gap:10px;
     padding:1.1rem 2.4rem;border-radius:999px;border:2px solid transparent;
     background:
-      linear-gradient(#8f4a63,#8f4a63) padding-box,
+      linear-gradient(var(--pink-deep),var(--pink-deep)) padding-box,
       conic-gradient(from var(--angle), transparent 0%, var(--pink) 8%, var(--pink) 20%, transparent 34%, transparent 100%) border-box;
     color:#fff;font-family:var(--ff-display);font-weight:800;font-size:1rem;letter-spacing:.01em;
     animation:spin-border 2.6s linear infinite;
@@ -115,6 +115,11 @@ __PIXEL__
   }
   .shiny:hover{transform:translateY(-2px);box-shadow:0 22px 54px -12px var(--pink-glow);}
   @media (prefers-reduced-motion: reduce){ .shiny{animation:none;} }
+  .shiny::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.5) .5px, transparent 0);
+    background-size:4px 4px;opacity:.1;pointer-events:none;
+  }
 
   /* ---------- green "buy" CTA, used only on the 3 checkout buttons ---------- */
   .shiny-buy{
@@ -146,10 +151,33 @@ __PIXEL__
   .section-head p{margin-top:12px;color:var(--ink-dim);font-size:.98rem;line-height:1.6;}
 
   /* ================= HERO ================= */
-  .hero{padding-top:40px;background:linear-gradient(180deg, var(--bg-wash) 0%, var(--bg) 60%);}
+  .hero{
+    position:relative;isolation:isolate;overflow:hidden;
+    padding-top:40px;background:linear-gradient(180deg, var(--bg-wash) 0%, var(--bg) 60%);
+  }
+  /* subtle dot-grid + soft glow, purely decorative, sits behind everything */
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background-image:radial-gradient(rgba(255,45,122,.16) 1px, transparent 1px);
+    background-size:22px 22px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 85%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 85%);
+  }
+  .hero::after{
+    content:"";position:absolute;z-index:-1;top:-120px;left:50%;translate:-50% 0;
+    width:640px;height:520px;max-width:180vw;border-radius:50%;
+    background:radial-gradient(closest-side, var(--pink-glow), transparent 72%);
+    opacity:.55;filter:blur(10px);
+  }
   .hero-inner{max-width:620px;margin:0 auto;text-align:center;}
-  .hero h1{font-size:clamp(1.8rem,6.4vw,2.6rem);font-weight:800;line-height:1.18;letter-spacing:-.01em;color:var(--pink-deep);}
+  .hero h1{font-size:clamp(1.8rem,6.4vw,2.6rem);font-weight:800;line-height:1.18;letter-spacing:-.01em;color:var(--ink);}
   .hero-sub{margin-top:16px;font-size:1.02rem;color:var(--ink-dim);line-height:1.65;}
+
+  /* ---- highlighted word technique: vivid color + hand-drawn underline ---- */
+  .hl{position:relative;display:inline-block;color:var(--pink-deep);white-space:nowrap;}
+  .hl-underline{position:absolute;left:2%;bottom:-.22em;width:96%;height:.32em;color:var(--pink);opacity:.75;pointer-events:none;}
+  .hl-underline path{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;}
+  @media (max-width:479px){ .hl{white-space:normal;} }
   .vsl-wrap{position:relative;margin:32px auto 0;max-width:400px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 30px 70px -30px var(--pink-glow);}
 
   /* live-viewer badge, anchored to the player wrapper, never the viewport */
@@ -190,7 +218,7 @@ __PIXEL__
   .molde-pair{
     display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;
     border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-lg);
-    padding:22px;box-shadow:0 20px 46px -30px rgba(143,74,99,.28);
+    padding:22px;box-shadow:0 20px 46px -30px rgba(176,18,90,.28);
     transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   }
   .molde-pair:hover{border-color:var(--panel-line-hover);box-shadow:0 24px 56px -26px var(--pink-glow);transform:translateY(-2px);}
@@ -209,7 +237,7 @@ __PIXEL__
   .bonus-card{
     display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center;
     border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-lg);
-    padding:22px;box-shadow:0 20px 46px -32px rgba(143,74,99,.3);
+    padding:22px;box-shadow:0 20px 46px -32px rgba(176,18,90,.3);
     transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   }
   .bonus-card:hover{border-color:var(--panel-line-hover);box-shadow:0 24px 56px -26px var(--pink-glow);transform:translateY(-2px);}
@@ -228,7 +256,7 @@ __PIXEL__
   .stat-card{
     border:1px solid var(--panel-line);background:var(--panel);border-radius:var(--radius-md);
     padding:20px 16px;text-align:center;
-    box-shadow:0 16px 36px -26px rgba(143,74,99,.3);
+    box-shadow:0 16px 36px -26px rgba(176,18,90,.3);
   }
   .stat-num{display:block;font-family:var(--ff-display);font-weight:800;font-size:2.1rem;color:var(--pink-deep);letter-spacing:-.01em;}
   .stat-label{display:block;margin-top:4px;font-size:.82rem;font-weight:600;color:var(--ink-dim);line-height:1.35;}
@@ -257,7 +285,7 @@ __PIXEL__
   .offer-checklist .ico .icon{width:11px;height:11px;stroke-width:3;}
 
   .offer-mock{width:100%;max-width:300px;margin:24px auto 0;}
-  .offer-mock img{width:100%;height:auto;border-radius:var(--radius-md);box-shadow:0 20px 50px -22px rgba(143,74,99,.4);}
+  .offer-mock img{width:100%;height:auto;border-radius:var(--radius-md);box-shadow:0 20px 50px -22px rgba(176,18,90,.4);}
   .offer-mock .placeholder{
     aspect-ratio:3/4;border:1.5px dashed var(--panel-line-hover);border-radius:var(--radius-md);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
@@ -308,7 +336,6 @@ __PIXEL__
     font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pink-deep);
     background:var(--pink-pale);border-radius:999px;padding:5px 14px;
   }
-  .offer-tier-tag--gold{color:#7a5a1e;background:linear-gradient(120deg, #fbe7b8, #f6d488);}
 
   .offer-checklist li.is-out{color:var(--ink-faint);text-decoration:line-through;}
   .offer-checklist .ico-out{background:#fde3e3;color:var(--urgent);}
@@ -564,7 +591,7 @@ __PIXEL__
         <div class="bonus-card reveal">
           <img src="data:image/png;base64,__IMG_BONUS1__" alt="Bônus 1: passo a passo em vídeo de como executar" width="700" height="700" loading="lazy">
           <div class="bonus-body">
-            <h3>Bônus 1 — Passo a passo em vídeo de como executar</h3>
+            <h3>Bônus 1: Passo a passo em vídeo de como executar</h3>
             <p>Aprenda hoje mesmo desde a impressão dos moldes até a execução final dos seus novos sousplats, trilhos e jogos americanos, com um passo a passo visual, simples e fácil de acompanhar.</p>
             <div class="bonus-price"><span class="old">De R$ 47,90</span><span class="free">Grátis</span></div>
           </div>
@@ -572,7 +599,7 @@ __PIXEL__
         <div class="bonus-card reveal">
           <img src="data:image/png;base64,__IMG_BONUS2__" alt="Bônus 2: lista completa de materiais e explicação prática" width="700" height="700" loading="lazy">
           <div class="bonus-body">
-            <h3>Bônus 2 — Lista completa de materiais e explicação prática</h3>
+            <h3>Bônus 2: Lista completa de materiais e explicação prática</h3>
             <p>Tenha acesso à lista completa dos materiais que você precisa para começar, além de uma explicação prática e objetiva para entender exatamente o que usar em cada etapa.</p>
             <div class="bonus-price"><span class="old">De R$ 27,90</span><span class="free">Grátis</span></div>
           </div>
@@ -580,7 +607,7 @@ __PIXEL__
         <div class="bonus-card reveal">
           <img src="data:image/png;base64,__IMG_BONUS3__" alt="Bônus 3: mais de 100 moldes de trilhos natalinos" width="700" height="700" loading="lazy">
           <div class="bonus-body">
-            <h3>Bônus 3 — +100 Moldes de Trilhos Natalinos</h3>
+            <h3>Bônus 3: +100 Moldes de Trilhos Natalinos</h3>
             <p>Receba uma seleção especial com mais 100 moldes de trilhos temáticos natalinos para criar mesas ainda mais encantadoras em datas especiais e ocasiões de fim de ano.</p>
             <div class="bonus-price"><span class="old">De R$ 37,90</span><span class="free">Grátis</span></div>
           </div>
@@ -588,7 +615,7 @@ __PIXEL__
         <div class="bonus-card reveal">
           <img src="data:image/png;base64,__IMG_BONUS4__" alt="Bônus 4: mais de 100 moldes de jogos americanos para datas especiais" width="700" height="700" loading="lazy">
           <div class="bonus-body">
-            <h3>Bônus 4 — +100 Moldes de Jogos Americanos para Datas Especiais</h3>
+            <h3>Bônus 4: +100 Moldes de Jogos Americanos para Datas Especiais</h3>
             <p>Mais 100 moldes extras de jogos americanos pensados para diferentes ocasiões especiais, trazendo ainda mais variedade para você compor mesas lindas e marcantes.</p>
             <div class="bonus-price"><span class="old">De R$ 37,90</span><span class="free">Grátis</span></div>
           </div>
@@ -596,7 +623,7 @@ __PIXEL__
         <div class="bonus-card reveal">
           <img src="data:image/png;base64,__IMG_BONUS5__" alt="Bônus 5: mais de 50 moldes de guardanapos e porta-guardanapos" width="700" height="700" loading="lazy">
           <div class="bonus-body">
-            <h3>Bônus 5 — +50 Moldes de Guardanapos e Porta-Guardanapos</h3>
+            <h3>Bônus 5: +50 Moldes de Guardanapos e Porta-Guardanapos</h3>
             <p>Amplie ainda mais o seu acervo com 50 moldes extras de guardanapos e porta-guardanapos para deixar a composição das suas mesas ainda mais delicada, completa e elegante.</p>
             <div class="bonus-price"><span class="old">De R$ 27,90</span><span class="free">Grátis</span></div>
           </div>

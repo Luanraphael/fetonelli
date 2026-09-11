@@ -75,8 +75,10 @@ PAGES = [
         "checkout_url": "https://pay.lowify.com.br/checkout.php?product_id=gODlv2",
         "vsl": "src/vsl-a.html",
         "headline": (
-            "Este vídeo é apenas para mulheres que amam Mesa Posta e "
-            "sabem que ser Anfitriã vai muito além de pratos e talheres."
+            "Este vídeo é apenas para mulheres que amam "
+            '<span class="hl">Mesa Posta<svg class="hl-underline" viewBox="0 0 100 10" '
+            'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span> '
+            "e sabem que ser Anfitriã vai muito além de pratos e talheres."
         ),
         "subhead": "src/subhead-empty.html",
         "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
@@ -87,11 +89,15 @@ PAGES = [
         "out": "v2.html",
         "body_class": "flat",
         "pixel": "src/pixel-b.html",
-        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm",  # ticket 19,90 -- also the guarantee-section CTA target
+        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",  # ticket 19,90 -- also the guarantee-section CTA target
         "checkout_url_10": "https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv",
-        "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm",
+        "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",
         "vsl": "src/vsl-b.html",
-        "headline": "500 Moldes de Mesa Posta na Talagarça para Anfitriãs de Sucesso.",
+        "headline": (
+            "500 Moldes de Mesa Posta na Talagarça para "
+            '<span class="hl">Anfitriãs de Sucesso<svg class="hl-underline" viewBox="0 0 100 10" '
+            'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
+        ),
         "subhead": "src/subhead-v2.html",
         "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
         "offer_block": "src/offer-v2.html",
