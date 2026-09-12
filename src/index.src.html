@@ -232,6 +232,46 @@ __PIXEL__
   .molde-block.is-result .molde-tag{color:var(--pink-deep);}
   .molde-block.is-result img{background:linear-gradient(160deg, var(--pink-pale), #fff);border-radius:var(--radius-md);padding:10px;}
 
+  /* moldes organizados por categoria (v2.html only -- index.html keeps one flat list) */
+  .molde-category + .molde-category{margin-top:52px;}
+  .molde-category-title{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    max-width:820px;margin:0 auto 22px;
+    font-family:var(--ff-display);font-weight:800;letter-spacing:-.01em;
+    font-size:clamp(1.1rem,3.6vw,1.4rem);color:var(--pink-deep);
+  }
+  .molde-category-title::before,
+  .molde-category-title::after{
+    content:"";flex:1;max-width:60px;height:2px;border-radius:999px;
+    background:linear-gradient(90deg, transparent, var(--pink), transparent);
+    opacity:.55;
+  }
+
+  /* ================= IDENTIFICAÇÃO (v2.html only) ================= */
+  #identificacao{background:linear-gradient(180deg, var(--bg-wash) 0%, var(--bg) 100%);}
+  #identificacao .section-head{max-width:760px;}
+  .ident-headline{
+    font-size:clamp(1.5rem,5.2vw,2.3rem);font-weight:800;line-height:1.28;
+    letter-spacing:-.01em;color:var(--ink);
+  }
+  .ident-list{
+    margin:8px auto 0;max-width:640px;
+    display:flex;flex-direction:column;gap:14px;text-align:left;
+  }
+  .ident-item{
+    display:flex;align-items:flex-start;gap:14px;
+    border:1px solid var(--panel-line);background:var(--panel);
+    border-radius:var(--radius-md);padding:16px 18px;
+    box-shadow:0 16px 36px -28px rgba(176,18,90,.22);
+  }
+  .ident-item .ico{
+    width:26px;height:26px;flex-shrink:0;margin-top:1px;border-radius:50%;
+    background:rgba(28,148,64,.12);color:#1c9440;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ident-item .ico .icon{width:14px;height:14px;stroke-width:3;}
+  .ident-item span:last-child{font-size:.94rem;font-weight:600;color:var(--ink);line-height:1.55;}
+
   /* ================= BÔNUS ================= */
   .bonus-grid{margin-top:8px;display:flex;flex-direction:column;gap:22px;max-width:760px;margin-left:auto;margin-right:auto;}
   .bonus-card{
@@ -513,37 +553,9 @@ __PIXEL__
   <div class="gate gate-anim">
 
   <!-- ================= MOLDES ================= -->
-  <section id="moldes">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow" style="margin-bottom:12px">Prévia do acervo</span>
-        <h2>Veja apenas alguns dos mais de 500 moldes por dentro</h2>
-      </div>
+  __MOLDES_BLOCK__
 
-      <div class="molde-list">
-        <div class="molde-pair reveal">
-          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE1__" alt="Molde do sousplat com fleur de lis" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
-          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT1__" alt="Sousplat pronto feito com o molde fleur de lis" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
-        </div>
-        <div class="molde-pair reveal">
-          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE2__" alt="Molde do sousplat em formato de flor de lótus" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
-          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT2__" alt="Sousplat pronto feito com o molde de lótus" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
-        </div>
-        <div class="molde-pair reveal">
-          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE3__" alt="Molde do sousplat com grinalda de flores" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
-          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT3__" alt="Sousplat pronto feito com o molde de grinalda de flores" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
-        </div>
-        <div class="molde-pair reveal">
-          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE4__" alt="Molde do sousplat redondo com barrado duplo" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
-          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT4__" alt="Sousplat pronto feito com o molde redondo de barrado duplo" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
-        </div>
-        <div class="molde-pair reveal">
-          <div class="molde-block"><img src="data:image/png;base64,__IMG_MOLDE5__" alt="Molde do sousplat em formato de mandala floral" width="700" height="725" loading="lazy"><span class="molde-tag">Molde</span></div>
-          <div class="molde-block is-result"><img src="data:image/png;base64,__IMG_SOUSPLAT5__" alt="Sousplat pronto feito com o molde de mandala floral" width="700" height="700" loading="lazy"><span class="molde-tag">Sousplat pronto</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+  __IDENT_SECTION__
 
   <!-- ================= COMPOSIÇÃO DO ACERVO ================= -->
   <section id="composicao" class="tight">

@@ -51,6 +51,21 @@ IMG_TOKENS = {
     "__IMG_BONUS3__": "src/img/bonus3.b64",
     "__IMG_BONUS4__": "src/img/bonus4.b64",
     "__IMG_BONUS5__": "src/img/bonus5.b64",
+    # v2.html only ("Trilhos de mesa" / "Jogos americanos" categories in
+    # src/moldes-v2.html); simply unused -- not missing -- on index.html,
+    # which still runs src/moldes-index.html's original flat 5-pair list.
+    "__IMG_TRILHO1_MOLDE__": "src/img/trilho1_molde.b64",
+    "__IMG_TRILHO1_PRONTO__": "src/img/trilho1_pronto.b64",
+    "__IMG_TRILHO2_MOLDE__": "src/img/trilho2_molde.b64",
+    "__IMG_TRILHO2_PRONTO__": "src/img/trilho2_pronto.b64",
+    "__IMG_TRILHO3_MOLDE__": "src/img/trilho3_molde.b64",
+    "__IMG_TRILHO3_PRONTO__": "src/img/trilho3_pronto.b64",
+    "__IMG_JOGO1_MOLDE__": "src/img/jogo1_molde.b64",
+    "__IMG_JOGO1_PRONTO__": "src/img/jogo1_pronto.b64",
+    "__IMG_JOGO2_MOLDE__": "src/img/jogo2_molde.b64",
+    "__IMG_JOGO2_PRONTO__": "src/img/jogo2_pronto.b64",
+    "__IMG_JOGO3_MOLDE__": "src/img/jogo3_molde.b64",
+    "__IMG_JOGO3_PRONTO__": "src/img/jogo3_pronto.b64",
 }
 
 # index.html and v2.html run different ad accounts, so each keeps its own
@@ -83,6 +98,8 @@ PAGES = [
         "subhead": "src/subhead-empty.html",
         "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
         "offer_block": "src/offer-index.html",
+        "moldes": "src/moldes-index.html",
+        "ident_section": "src/ident-index.html",
         "gate_script": "src/gate-vsl.html",
     },
     {
@@ -101,6 +118,8 @@ PAGES = [
         "subhead": "src/subhead-v2.html",
         "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
         "offer_block": "src/offer-v2.html",
+        "moldes": "src/moldes-v2.html",
+        "ident_section": "src/ident-v2.html",
         "gate_script": "src/gate-none.html",
     },
 ]
@@ -139,6 +158,12 @@ def build_page(page):
     offer_data = (ROOT / page["offer_block"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=2)
 
+    moldes_data = (ROOT / page["moldes"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__MOLDES_BLOCK__", moldes_data, exactly=1)
+
+    ident_data = (ROOT / page["ident_section"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__IDENT_SECTION__", ident_data, exactly=1)
+
     gate_rel = page.get("gate_script")
     gate_data = (ROOT / gate_rel).read_text(encoding="utf-8").strip() if gate_rel else ""
     fragment = _inject(fragment, "__GATE_SCRIPT__", gate_data, exactly=1)
@@ -154,7 +179,14 @@ def build_page(page):
     if "checkout_url_19" in page:
         fragment = _inject(fragment, "__CHECKOUT_19__", page["checkout_url_19"], exactly=2)
 
+    # image tokens are optional per page now: index.html's moldes-index.html
+    # and v2.html's moldes-v2.html each only reference a subset of
+    # IMG_TOKENS (they don't share the same 5 sousplat pairs, and only
+    # moldes-v2.html uses the trilho/jogo tokens), so a token simply not
+    # appearing in this page's fragment is expected, not an error.
     for token, rel_path in IMG_TOKENS.items():
+        if token not in fragment:
+            continue
         data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
         fragment = _inject(fragment, token, data)
 
