@@ -130,7 +130,7 @@ PAGES = [
         "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",
         "vsl": "src/vsl-b.html",
         "headline": (
-            "500 Moldes de Mesa Posta na Talagarça para "
+            "500 Moldes de Mesa Posta na Tela para "
             '<span class="hl">Anfitriãs de Sucesso<svg class="hl-underline" viewBox="0 0 100 10" '
             'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
         ),
