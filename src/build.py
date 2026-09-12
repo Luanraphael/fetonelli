@@ -81,7 +81,7 @@ PAGES = [
             "e sabem que ser Anfitriã vai muito além de pratos e talheres."
         ),
         "subhead": "src/subhead-empty.html",
-        "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
+        "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 12/09',
         "offer_block": "src/offer-index.html",
         "offer_block_2": "src/offer-index.html",
         "gate_script": "src/gate-vsl.html",
@@ -100,7 +100,7 @@ PAGES = [
             'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
         ),
         "subhead": "src/subhead-v2.html",
-        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
+        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">12/09</strong>',
         "offer_block": "src/offer-v2.html",
         "offer_block_2": "src/offer-v2-second.html",
         "gate_script": "src/gate-none.html",
