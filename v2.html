@@ -358,20 +358,27 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
 
   /* ---- v2.html only: two-tier offer (R$10 moldes-only vs R$19,90 tudo) ---- */
   .offer-tiers{display:flex;flex-direction:column;align-items:stretch;}
+  .offer-tiers > .offer:not(:first-child){margin-top:28px;}
   .offer-tier-tag{
     display:inline-block;margin:0 auto 10px;font-family:var(--ff-display);font-weight:800;
     font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pink-deep);
     background:var(--pink-pale);border-radius:999px;padding:5px 14px;
   }
 
-  .offer-checklist li.is-out{color:var(--ink-faint);text-decoration:line-through;}
+  .offer-checklist li.is-out{
+    color:var(--urgent);text-decoration:line-through;
+    text-decoration-color:var(--urgent);text-decoration-thickness:2px;
+  }
   .offer-checklist .ico-out{background:#fde3e3;color:var(--urgent);}
+  @media (prefers-reduced-motion: no-preference){
+    .offer-checklist li.is-out{animation:price-pulse 1.8s ease-in-out infinite;}
+  }
 
   /* the featured, "sophisticated" R$19,90 card: gold/pink gradient border,
      a shimmering ribbon and a touch more lift than the basic card */
   .offer-featured{
     position:relative;isolation:isolate;
-    margin-top:28px;padding-top:58px;
+    padding-top:58px;
     border:2px solid transparent;
     background:
       linear-gradient(165deg, #fff 0%, var(--pink-pale) 120%) padding-box,
@@ -455,6 +462,12 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
      .revealed to <body>. This is the winning A/B setup, kept on
      index.html; v2.html went back to "mini VSL + full page, always
      visible" (body class "flat" below), so none of this applies there. */
+  /* base display for .gate is set below (shared by both pages) so that,
+     once revealed on index.html, it's exactly what it was before this
+     rule existed: a flex column preserving natural DOM order. On v2.html
+     that same flex column is what lets us reorder #garantia after
+     #oferta-2 below, purely visually, without touching the shared markup. */
+  .gate{display:flex;flex-direction:column;}
   body.gated:not(.revealed) .gate{display:none;}
   body.gated:not(.revealed){padding-top:0;}
   body.gated.revealed .gate-anim{animation:gateFadeIn .5s ease both;}
@@ -475,6 +488,12 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
      (src/subhead-v2.html), so it's hidden here rather than removed from
      the shared markup index.html still uses it as-is. */
   body.flat .hero-badges{display:none;}
+
+  /* on v2.html, the guarantee section moves to right after the final
+     19,90 CTA (#oferta-2), instead of before it -- pure visual reorder
+     via flex order, DOM/markup stays shared with index.html untouched */
+  body.flat #garantia{order:2;}
+  body.flat #faq{order:3;}
 
   .center{text-align:center;}
 </style>
@@ -671,41 +690,7 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   <section id="oferta">
     <div class="wrap">
       <div class="offer-tiers reveal">
-  <!-- TICKET BÁSICO — R$10, só os moldes -->
-  <div class="offer offer-basic">
-    <span class="offer-tier-tag">Pacote Básico</span>
-    <h2>Comece hoje o seu acervo de Mesa Posta</h2>
-    <p class="offer-sub">Receba acesso imediato aos mais de 500 moldes + bônus especiais por um valor promocional.</p>
-
-    <div class="offer-checklist">
-      <p class="offer-checklist-title">Você recebe hoje:</p>
-      <ul>
-        <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> + 500 Moldes de Mesa Posta na Talagarça para Anfitriãs de Sucesso</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 1: Passo a passo em vídeo de como executar</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 2: Lista completa de materiais e explicação prática</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 3: +100 Moldes de Trilhos Natalinos</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 4: +100 Moldes de Jogos Americanos para Datas Especiais</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 5: +50 Moldes de Guardanapos e Porta-Guardanapos</li>
-      </ul>
-    </div>
-
-    <div class="offer-card">
-      <p class="offer-price-lead">De <span class="offer-price-old">R$ 97,00</span> por:</p>
-      <hr class="offer-divider">
-      <span class="offer-price-installments">R$ 10,00</span>
-      <span class="offer-price-cash">à vista, pagamento único</span>
-
-      <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
-
-      <div class="offer-seals">
-        <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
-        <span class="offer-seal"><svg class="icon"><use href="#i-check"/></svg> Satisfação Garantida</span>
-        <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- TICKET COMPLETO — R$19,90, moldes + todos os bônus -->
+  <!-- TICKET COMPLETO — R$19,90, moldes + todos os bônus (aparece primeiro) -->
   <div class="offer offer-featured">
     <span class="offer-ribbon">Mais Completo</span>
     <h2>Comece hoje o seu acervo de Mesa Posta</h2>
@@ -734,6 +719,40 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       <span class="offer-price-cash">à vista, com todos os bônus</span>
 
       <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
+
+      <div class="offer-seals">
+        <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
+        <span class="offer-seal"><svg class="icon"><use href="#i-check"/></svg> Satisfação Garantida</span>
+        <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET BÁSICO — R$10, só os moldes (aparece depois, para reforçar que o completo compensa mais) -->
+  <div class="offer offer-basic">
+    <span class="offer-tier-tag">Pacote Básico</span>
+    <h2>Comece hoje o seu acervo de Mesa Posta</h2>
+    <p class="offer-sub">Receba acesso imediato aos mais de 500 moldes + bônus especiais por um valor promocional.</p>
+
+    <div class="offer-checklist">
+      <p class="offer-checklist-title">Você recebe hoje:</p>
+      <ul>
+        <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> + 500 Moldes de Mesa Posta na Talagarça para Anfitriãs de Sucesso</li>
+        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 1: Passo a passo em vídeo de como executar</li>
+        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 2: Lista completa de materiais e explicação prática</li>
+        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 3: +100 Moldes de Trilhos Natalinos</li>
+        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 4: +100 Moldes de Jogos Americanos para Datas Especiais</li>
+        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 5: +50 Moldes de Guardanapos e Porta-Guardanapos</li>
+      </ul>
+    </div>
+
+    <div class="offer-card">
+      <p class="offer-price-lead">De <span class="offer-price-old">R$ 97,00</span> por:</p>
+      <hr class="offer-divider">
+      <span class="offer-price-installments">R$ 10,00</span>
+      <span class="offer-price-cash">à vista, pagamento único</span>
+
+      <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
 
       <div class="offer-seals">
         <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
@@ -779,42 +798,9 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   <!-- ================= OFERTA (REPETIÇÃO) ================= -->
   <section id="oferta-2">
     <div class="wrap">
-      <div class="offer-tiers reveal">
-  <!-- TICKET BÁSICO — R$10, só os moldes -->
-  <div class="offer offer-basic">
-    <span class="offer-tier-tag">Pacote Básico</span>
-    <h2>Comece hoje o seu acervo de Mesa Posta</h2>
-    <p class="offer-sub">Receba acesso imediato aos mais de 500 moldes + bônus especiais por um valor promocional.</p>
-
-    <div class="offer-checklist">
-      <p class="offer-checklist-title">Você recebe hoje:</p>
-      <ul>
-        <li><span class="ico"><svg class="icon"><use href="#i-check"/></svg></span> + 500 Moldes de Mesa Posta na Talagarça para Anfitriãs de Sucesso</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 1: Passo a passo em vídeo de como executar</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 2: Lista completa de materiais e explicação prática</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 3: +100 Moldes de Trilhos Natalinos</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 4: +100 Moldes de Jogos Americanos para Datas Especiais</li>
-        <li class="is-out"><span class="ico ico-out"><svg class="icon"><use href="#i-cross"/></svg></span> Bônus 5: +50 Moldes de Guardanapos e Porta-Guardanapos</li>
-      </ul>
-    </div>
-
-    <div class="offer-card">
-      <p class="offer-price-lead">De <span class="offer-price-old">R$ 97,00</span> por:</p>
-      <hr class="offer-divider">
-      <span class="offer-price-installments">R$ 10,00</span>
-      <span class="offer-price-cash">à vista, pagamento único</span>
-
-      <a class="shiny shiny-buy" href="https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv"><svg class="icon"><use href="#i-check"/></svg> Quero os moldes agora!</a>
-
-      <div class="offer-seals">
-        <span class="offer-seal"><svg class="icon"><use href="#i-lock"/></svg> Compra Segura</span>
-        <span class="offer-seal"><svg class="icon"><use href="#i-check"/></svg> Satisfação Garantida</span>
-        <span class="offer-seal"><svg class="icon"><use href="#i-shield"/></svg> Privacidade Protegida</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- TICKET COMPLETO — R$19,90, moldes + todos os bônus -->
+      <!-- Repetição da oferta, depois de "Quem sou eu": só o ticket completo de
+     R$19,90, sem repetir o básico de R$10 pela segunda vez. -->
+<div class="offer-tiers reveal">
   <div class="offer offer-featured">
     <span class="offer-ribbon">Mais Completo</span>
     <h2>Comece hoje o seu acervo de Mesa Posta</h2>

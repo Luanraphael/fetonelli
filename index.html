@@ -358,20 +358,27 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
 
   /* ---- v2.html only: two-tier offer (R$10 moldes-only vs R$19,90 tudo) ---- */
   .offer-tiers{display:flex;flex-direction:column;align-items:stretch;}
+  .offer-tiers > .offer:not(:first-child){margin-top:28px;}
   .offer-tier-tag{
     display:inline-block;margin:0 auto 10px;font-family:var(--ff-display);font-weight:800;
     font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pink-deep);
     background:var(--pink-pale);border-radius:999px;padding:5px 14px;
   }
 
-  .offer-checklist li.is-out{color:var(--ink-faint);text-decoration:line-through;}
+  .offer-checklist li.is-out{
+    color:var(--urgent);text-decoration:line-through;
+    text-decoration-color:var(--urgent);text-decoration-thickness:2px;
+  }
   .offer-checklist .ico-out{background:#fde3e3;color:var(--urgent);}
+  @media (prefers-reduced-motion: no-preference){
+    .offer-checklist li.is-out{animation:price-pulse 1.8s ease-in-out infinite;}
+  }
 
   /* the featured, "sophisticated" R$19,90 card: gold/pink gradient border,
      a shimmering ribbon and a touch more lift than the basic card */
   .offer-featured{
     position:relative;isolation:isolate;
-    margin-top:28px;padding-top:58px;
+    padding-top:58px;
     border:2px solid transparent;
     background:
       linear-gradient(165deg, #fff 0%, var(--pink-pale) 120%) padding-box,
@@ -455,6 +462,12 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
      .revealed to <body>. This is the winning A/B setup, kept on
      index.html; v2.html went back to "mini VSL + full page, always
      visible" (body class "flat" below), so none of this applies there. */
+  /* base display for .gate is set below (shared by both pages) so that,
+     once revealed on index.html, it's exactly what it was before this
+     rule existed: a flex column preserving natural DOM order. On v2.html
+     that same flex column is what lets us reorder #garantia after
+     #oferta-2 below, purely visually, without touching the shared markup. */
+  .gate{display:flex;flex-direction:column;}
   body.gated:not(.revealed) .gate{display:none;}
   body.gated:not(.revealed){padding-top:0;}
   body.gated.revealed .gate-anim{animation:gateFadeIn .5s ease both;}
@@ -475,6 +488,12 @@ src="https://www.facebook.com/tr?id=1545962916856876&ev=PageView&noscript=1"
      (src/subhead-v2.html), so it's hidden here rather than removed from
      the shared markup index.html still uses it as-is. */
   body.flat .hero-badges{display:none;}
+
+  /* on v2.html, the guarantee section moves to right after the final
+     19,90 CTA (#oferta-2), instead of before it -- pure visual reorder
+     via flex order, DOM/markup stays shared with index.html untouched */
+  body.flat #garantia{order:2;}
+  body.flat #faq{order:3;}
 
   .center{text-align:center;}
 </style>

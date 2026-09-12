@@ -83,6 +83,7 @@ PAGES = [
         "subhead": "src/subhead-empty.html",
         "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
         "offer_block": "src/offer-index.html",
+        "offer_block_2": "src/offer-index.html",
         "gate_script": "src/gate-vsl.html",
     },
     {
@@ -101,6 +102,7 @@ PAGES = [
         "subhead": "src/subhead-v2.html",
         "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
         "offer_block": "src/offer-v2.html",
+        "offer_block_2": "src/offer-v2-second.html",
         "gate_script": "src/gate-none.html",
     },
 ]
@@ -136,8 +138,16 @@ def build_page(page):
     vsl_data = (ROOT / page["vsl"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__VSL__", vsl_data, exactly=1)
 
+    # __OFFER_BLOCK__ (before "Quem sou eu") and __OFFER_BLOCK_2__ (after
+    # the guarantee, on v2 -- see the reorder note above the "gate" CSS)
+    # are separate tokens so each page can show different content in
+    # each spot: index.html repeats the same single-price offer in both;
+    # v2.html shows both tiers first, then only the R$19,90 tier again.
     offer_data = (ROOT / page["offer_block"]).read_text(encoding="utf-8").strip()
-    fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=2)
+    fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=1)
+
+    offer_data_2 = (ROOT / page["offer_block_2"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__OFFER_BLOCK_2__", offer_data_2, exactly=1)
 
     gate_rel = page.get("gate_script")
     gate_data = (ROOT / gate_rel).read_text(encoding="utf-8").strip() if gate_rel else ""
@@ -146,11 +156,13 @@ def build_page(page):
     # checkout links: __CHECKOUT__ is the "default" target (the guarantee
     # section button on both pages; also the only checkout token used
     # inside offer-index.html). __CHECKOUT_10__ / __CHECKOUT_19__ only
-    # exist inside offer-v2.html, so they're only injected for pages that
-    # declare them.
+    # exist inside offer-v2.html / offer-v2-second.html, so they're only
+    # injected for pages that declare them. __CHECKOUT_10__ appears once
+    # (the basic tier only shows in the first offer block); __CHECKOUT_19__
+    # appears twice (the featured tier shows in both offer blocks).
     fragment = _inject(fragment, "__CHECKOUT__", page["checkout_url"])
     if "checkout_url_10" in page:
-        fragment = _inject(fragment, "__CHECKOUT_10__", page["checkout_url_10"], exactly=2)
+        fragment = _inject(fragment, "__CHECKOUT_10__", page["checkout_url_10"], exactly=1)
     if "checkout_url_19" in page:
         fragment = _inject(fragment, "__CHECKOUT_19__", page["checkout_url_19"], exactly=2)
 
