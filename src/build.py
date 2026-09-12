@@ -53,14 +53,18 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
-# images used ONLY inside src/bonus-extra-v2.html (the 3 v2-only extra
-# bonuses). Deliberately NOT part of IMG_TOKENS above: that dict is
-# applied unconditionally to every page's fragment, but these tokens
-# only exist inside a snippet that index.html never includes, so they're
-# resolved locally, inside bonus-extra-v2.html's own text, before it's
-# spliced into the shared fragment (see build_page below).
+# images used ONLY inside src/bonus-extra-v2.html (the 2 v2-only extra
+# bonuses -- a 3rd one, bonus6.png/"Lista Completa De Materiais", was
+# removed for duplicating the existing Bônus 2, so this dict keeps the
+# asset filenames bonus7/bonus8 even though the page now labels them
+# "Bônus 6"/"Bônus 7"; renaming files just to match display numbers
+# isn't worth the churn). Deliberately NOT part of IMG_TOKENS above:
+# that dict is applied unconditionally to every page's fragment, but
+# these tokens only exist inside a snippet that index.html never
+# includes, so they're resolved locally, inside bonus-extra-v2.html's
+# own text, before it's spliced into the shared fragment (see
+# build_page below).
 BONUS_EXTRA_IMG_TOKENS = {
-    "__IMG_BONUS6__": "src/img/bonus6.b64",
     "__IMG_BONUS7__": "src/img/bonus7.b64",
     "__IMG_BONUS8__": "src/img/bonus8.b64",
 }
