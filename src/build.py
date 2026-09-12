@@ -53,6 +53,18 @@ IMG_TOKENS = {
     "__IMG_BONUS5__": "src/img/bonus5.b64",
 }
 
+# images used ONLY inside src/bonus-extra-v2.html (the 3 v2-only extra
+# bonuses). Deliberately NOT part of IMG_TOKENS above: that dict is
+# applied unconditionally to every page's fragment, but these tokens
+# only exist inside a snippet that index.html never includes, so they're
+# resolved locally, inside bonus-extra-v2.html's own text, before it's
+# spliced into the shared fragment (see build_page below).
+BONUS_EXTRA_IMG_TOKENS = {
+    "__IMG_BONUS6__": "src/img/bonus6.b64",
+    "__IMG_BONUS7__": "src/img/bonus7.b64",
+    "__IMG_BONUS8__": "src/img/bonus8.b64",
+}
+
 # index.html and v2.html run different ad accounts, so each keeps its own
 # tracking pixel and its own VTurb VSL (separate video = separate
 # view/watch-time metrics per funnel).
@@ -85,6 +97,8 @@ PAGES = [
         "offer_block": "src/offer-index.html",
         "offer_block_2": "src/offer-index.html",
         "gate_script": "src/gate-vsl.html",
+        # no bonus_extra / transform_section keys: index.html keeps its
+        # original 5 bonuses and no transformation section, untouched.
     },
     {
         "out": "v2.html",
@@ -104,6 +118,8 @@ PAGES = [
         "offer_block": "src/offer-v2.html",
         "offer_block_2": "src/offer-v2-second.html",
         "gate_script": "src/gate-none.html",
+        "bonus_extra": "src/bonus-extra-v2.html",
+        "transform_section": "src/transform-v2.html",
     },
 ]
 
@@ -152,6 +168,25 @@ def build_page(page):
     gate_rel = page.get("gate_script")
     gate_data = (ROOT / gate_rel).read_text(encoding="utf-8").strip() if gate_rel else ""
     fragment = _inject(fragment, "__GATE_SCRIPT__", gate_data, exactly=1)
+
+    # __BONUS_EXTRA__ (3 extra bonus cards, v2.html only) and
+    # __TRANSFORM_SECTION__ (the "antes/depois" section, v2.html only)
+    # are both optional per page: index.html has neither key, so it gets
+    # an empty string for each -- meaning its bonus grid and page flow
+    # stay byte-for-byte the same as before this feature existed.
+    bonus_extra_rel = page.get("bonus_extra")
+    if bonus_extra_rel:
+        bonus_extra_data = (ROOT / bonus_extra_rel).read_text(encoding="utf-8").strip()
+        for token, rel_path in BONUS_EXTRA_IMG_TOKENS.items():
+            img_data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
+            bonus_extra_data = _inject(bonus_extra_data, token, img_data, exactly=1)
+    else:
+        bonus_extra_data = ""
+    fragment = _inject(fragment, "__BONUS_EXTRA__", bonus_extra_data, exactly=1)
+
+    transform_rel = page.get("transform_section")
+    transform_data = (ROOT / transform_rel).read_text(encoding="utf-8").strip() if transform_rel else ""
+    fragment = _inject(fragment, "__TRANSFORM_SECTION__", transform_data, exactly=1)
 
     # checkout links: __CHECKOUT__ is the "default" target (the guarantee
     # section button on both pages; also the only checkout token used
