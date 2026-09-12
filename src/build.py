@@ -68,6 +68,22 @@ IMG_TOKENS = {
     "__IMG_JOGO3_PRONTO__": "src/img/jogo3_pronto.b64",
 }
 
+# images used ONLY inside src/bonus-extra-v2.html (the 2 v2-only extra
+# bonuses -- a 3rd one, bonus6.png/"Lista Completa De Materiais", was
+# removed for duplicating the existing Bônus 2, so this dict keeps the
+# asset filenames bonus7/bonus8 even though the page now labels them
+# "Bônus 6"/"Bônus 7"; renaming files just to match display numbers
+# isn't worth the churn). Deliberately NOT part of IMG_TOKENS above:
+# that dict is applied unconditionally to every page's fragment, but
+# these tokens only exist inside a snippet that index.html never
+# includes, so they're resolved locally, inside bonus-extra-v2.html's
+# own text, before it's spliced into the shared fragment (see
+# build_page below).
+BONUS_EXTRA_IMG_TOKENS = {
+    "__IMG_BONUS7__": "src/img/bonus7.b64",
+    "__IMG_BONUS8__": "src/img/bonus8.b64",
+}
+
 # index.html and v2.html run different ad accounts, so each keeps its own
 # tracking pixel and its own VTurb VSL (separate video = separate
 # view/watch-time metrics per funnel).
@@ -96,11 +112,14 @@ PAGES = [
             "e sabem que ser Anfitriã vai muito além de pratos e talheres."
         ),
         "subhead": "src/subhead-empty.html",
-        "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 09/09',
+        "topbar": 'Promoção Válida somente <strong class="topbar-hl">HOJE</strong> 12/09',
         "offer_block": "src/offer-index.html",
+        "offer_block_2": "src/offer-index.html",
         "moldes": "src/moldes-index.html",
         "ident_section": "src/ident-index.html",
         "gate_script": "src/gate-vsl.html",
+        # no bonus_extra / transform_section keys: index.html keeps its
+        # original 5 bonuses and no transformation section, untouched.
     },
     {
         "out": "v2.html",
@@ -116,11 +135,14 @@ PAGES = [
             'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
         ),
         "subhead": "src/subhead-v2.html",
-        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">11/09</strong>',
+        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">12/09</strong>',
         "offer_block": "src/offer-v2.html",
+        "offer_block_2": "src/offer-v2-second.html",
         "moldes": "src/moldes-v2.html",
         "ident_section": "src/ident-v2.html",
         "gate_script": "src/gate-none.html",
+        "bonus_extra": "src/bonus-extra-v2.html",
+        "transform_section": "src/transform-v2.html",
     },
 ]
 
@@ -155,8 +177,16 @@ def build_page(page):
     vsl_data = (ROOT / page["vsl"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__VSL__", vsl_data, exactly=1)
 
+    # __OFFER_BLOCK__ (before "Quem sou eu") and __OFFER_BLOCK_2__ (after
+    # the guarantee, on v2 -- see the reorder note above the "gate" CSS)
+    # are separate tokens so each page can show different content in
+    # each spot: index.html repeats the same single-price offer in both;
+    # v2.html shows both tiers first, then only the R$19,90 tier again.
     offer_data = (ROOT / page["offer_block"]).read_text(encoding="utf-8").strip()
-    fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=2)
+    fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=1)
+
+    offer_data_2 = (ROOT / page["offer_block_2"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__OFFER_BLOCK_2__", offer_data_2, exactly=1)
 
     moldes_data = (ROOT / page["moldes"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__MOLDES_BLOCK__", moldes_data, exactly=1)
@@ -168,14 +198,35 @@ def build_page(page):
     gate_data = (ROOT / gate_rel).read_text(encoding="utf-8").strip() if gate_rel else ""
     fragment = _inject(fragment, "__GATE_SCRIPT__", gate_data, exactly=1)
 
+    # __BONUS_EXTRA__ (3 extra bonus cards, v2.html only) and
+    # __TRANSFORM_SECTION__ (the "antes/depois" section, v2.html only)
+    # are both optional per page: index.html has neither key, so it gets
+    # an empty string for each -- meaning its bonus grid and page flow
+    # stay byte-for-byte the same as before this feature existed.
+    bonus_extra_rel = page.get("bonus_extra")
+    if bonus_extra_rel:
+        bonus_extra_data = (ROOT / bonus_extra_rel).read_text(encoding="utf-8").strip()
+        for token, rel_path in BONUS_EXTRA_IMG_TOKENS.items():
+            img_data = (ROOT / rel_path).read_text(encoding="utf-8").strip()
+            bonus_extra_data = _inject(bonus_extra_data, token, img_data, exactly=1)
+    else:
+        bonus_extra_data = ""
+    fragment = _inject(fragment, "__BONUS_EXTRA__", bonus_extra_data, exactly=1)
+
+    transform_rel = page.get("transform_section")
+    transform_data = (ROOT / transform_rel).read_text(encoding="utf-8").strip() if transform_rel else ""
+    fragment = _inject(fragment, "__TRANSFORM_SECTION__", transform_data, exactly=1)
+
     # checkout links: __CHECKOUT__ is the "default" target (the guarantee
     # section button on both pages; also the only checkout token used
     # inside offer-index.html). __CHECKOUT_10__ / __CHECKOUT_19__ only
-    # exist inside offer-v2.html, so they're only injected for pages that
-    # declare them.
+    # exist inside offer-v2.html / offer-v2-second.html, so they're only
+    # injected for pages that declare them. __CHECKOUT_10__ appears once
+    # (the basic tier only shows in the first offer block); __CHECKOUT_19__
+    # appears twice (the featured tier shows in both offer blocks).
     fragment = _inject(fragment, "__CHECKOUT__", page["checkout_url"])
     if "checkout_url_10" in page:
-        fragment = _inject(fragment, "__CHECKOUT_10__", page["checkout_url_10"], exactly=2)
+        fragment = _inject(fragment, "__CHECKOUT_10__", page["checkout_url_10"], exactly=1)
     if "checkout_url_19" in page:
         fragment = _inject(fragment, "__CHECKOUT_19__", page["checkout_url_19"], exactly=2)
 
