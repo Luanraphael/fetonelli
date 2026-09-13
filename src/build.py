@@ -78,6 +78,20 @@ IMG_TOKENS = {
     "__IMG_LATAM_BONUS6__": "src/img/latam_bonus6.b64",
     "__IMG_LATAM_BONUS7__": "src/img/latam_bonus7.b64",
     "__IMG_LATAM_MOCKUPCTA__": "src/img/latam_mockupcta.b64",
+    # feedback showcase carousel -- index.html (LATAM) only uses the
+    # FEEDBACK_LATAM* tokens (src/feedback-latam.html), v2.html only uses
+    # the FEEDBACK_V2* ones (src/feedback-v2.html); each set comes from
+    # its own separate source folder, never mixed.
+    "__IMG_FEEDBACK_LATAM1__": "src/img/feedback_latam1.b64",
+    "__IMG_FEEDBACK_LATAM2__": "src/img/feedback_latam2.b64",
+    "__IMG_FEEDBACK_LATAM3__": "src/img/feedback_latam3.b64",
+    "__IMG_FEEDBACK_LATAM4__": "src/img/feedback_latam4.b64",
+    "__IMG_FEEDBACK_LATAM5__": "src/img/feedback_latam5.b64",
+    "__IMG_FEEDBACK_V2_1__": "src/img/feedback_v2_1.b64",
+    "__IMG_FEEDBACK_V2_2__": "src/img/feedback_v2_2.b64",
+    "__IMG_FEEDBACK_V2_3__": "src/img/feedback_v2_3.b64",
+    "__IMG_FEEDBACK_V2_4__": "src/img/feedback_v2_4.b64",
+    "__IMG_FEEDBACK_V2_5__": "src/img/feedback_v2_5.b64",
 }
 
 # images used ONLY inside src/bonus-extra-v2.html (the 2 v2-only extra
@@ -136,6 +150,8 @@ PAGES = [
         "faq_section": "src/faq-latam.html",
         "footer_section": "src/footer-latam.html",
         "transform_section": "src/transform-latam.html",
+        "feedback_section": "src/feedback-latam.html",
+        "timer_key": "offerTimerLatam",
         "gate_script": "src/gate-none.html",
     },
     {
@@ -172,6 +188,8 @@ PAGES = [
         "gate_script": "src/gate-none.html",
         "bonus_extra": "src/bonus-extra-v2.html",
         "transform_section": "src/transform-v2.html",
+        "feedback_section": "src/feedback-v2.html",
+        "timer_key": "offerTimerV2",
     },
 ]
 
@@ -280,6 +298,13 @@ def build_page(page):
     transform_rel = page.get("transform_section")
     transform_data = (ROOT / transform_rel).read_text(encoding="utf-8").strip() if transform_rel else ""
     fragment = _inject(fragment, "__TRANSFORM_SECTION__", transform_data, exactly=1)
+
+    feedback_data = (ROOT / page["feedback_section"]).read_text(encoding="utf-8").strip()
+    fragment = _inject(fragment, "__FEEDBACK_SECTION__", feedback_data, exactly=1)
+
+    # single per-page sessionStorage key for the .offer-timer countdown,
+    # so index.html and v2.html never clash if open in the same browser
+    fragment = _inject(fragment, "__TIMER_KEY__", page["timer_key"], exactly=1)
 
     # checkout links: __CHECKOUT__ is the "default" target (the guarantee
     # section button on both pages; also the only checkout token used

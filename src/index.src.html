@@ -486,6 +486,63 @@ __PIXEL__
   .transform-list li.reveal:nth-child(4){transition-delay:.24s;}
   .transform-list li.reveal:nth-child(5){transition-delay:.32s;}
 
+  /* ================= FEEDBACKS (vitrine) ================= */
+  #feedback{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(180deg, var(--bg) 0%, var(--bg-wash) 55%, var(--bg) 100%);}
+  #feedback::before{
+    content:"";position:absolute;z-index:-1;top:-140px;left:50%;translate:-50% 0;
+    width:640px;height:520px;max-width:200vw;border-radius:50%;
+    background:radial-gradient(closest-side, var(--pink-glow), transparent 72%);
+    opacity:.32;filter:blur(14px);
+  }
+  #feedback .section-head{position:relative;}
+  .feedback-quote{
+    display:block;font-family:var(--ff-display);font-size:5rem;line-height:1;
+    color:var(--pink);opacity:.16;pointer-events:none;user-select:none;margin-bottom:-18px;
+  }
+
+  .feedback-viewport{
+    position:relative;margin-top:40px;
+    overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;
+    cursor:grab;
+  }
+  .feedback-viewport::-webkit-scrollbar{display:none;}
+  .feedback-viewport:active{cursor:grabbing;}
+  .feedback-track{display:flex;gap:16px;width:max-content;padding:6px 22px 10px;}
+  .feedback-card{
+    flex:0 0 auto;width:80vw;border-radius:var(--radius-lg);overflow:hidden;
+    border:1px solid var(--panel-line);background:#fff;
+    box-shadow:0 24px 60px -30px rgba(176,18,90,.35);
+  }
+  .feedback-card img{width:100%;height:auto;display:block;}
+  @media (min-width:480px){ .feedback-card{width:236px;} }
+  @media (min-width:1024px){ .feedback-card{width:262px;} }
+  @media (prefers-reduced-motion: reduce){ .feedback-viewport{scroll-behavior:auto;} }
+
+  /* ================= TEMPORIZADOR (nas seções de oferta) ================= */
+  .offer-timer{
+    display:flex;align-items:center;gap:12px;
+    margin:16px auto 0;padding:11px 18px;max-width:320px;
+    border-radius:var(--radius-md);
+    background:linear-gradient(165deg, #fff 0%, var(--pink-pale) 130%);
+    border:1px solid var(--panel-line-hover);
+    box-shadow:0 16px 38px -22px var(--pink-glow);
+  }
+  .offer-timer-icon{
+    width:34px;height:34px;flex-shrink:0;border-radius:50%;
+    background:var(--pink-deep);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 22px -10px var(--pink-glow);
+  }
+  .offer-timer-icon .icon{width:16px;height:16px;stroke-width:2;}
+  .offer-timer-body{text-align:left;flex:1;min-width:0;}
+  .offer-timer-label{font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-dim);}
+  .offer-timer-value{
+    margin-top:1px;font-family:var(--ff-display);font-weight:800;
+    font-size:1.45rem;letter-spacing:.02em;color:var(--pink-deep);
+    font-variant-numeric:tabular-nums;line-height:1.15;
+  }
+
   /* ================= QUEM SOU EU ================= */
   .about{max-width:560px;margin:0 auto;text-align:center;}
   .about-photo-wrap{
@@ -598,6 +655,7 @@ __PIXEL__
   <symbol id="i-send" viewBox="0 0 24 24"><polygon class="icon-solid" points="3,11.5 21,3 12.5,21 10.5,13.5 3,11.5"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle class="icon-solid" cx="8.5" cy="8.5" r="1.4"/><path d="M21 15.5l-5.2-5.2-4 4-2.8-2.8L3 17.5"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.3 15.2c.4.7 1.3 1.1 2.3 1.1 1.5 0 2.7-.8 2.7-1.9 0-2.5-5.4-1-5.4-3.5 0-1.1 1.2-1.9 2.7-1.9 1 0 1.9.4 2.3 1.1"/><path d="M12 7.3v1.1M12 15.6v1.1"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/></symbol>
 </svg>
 
 <main id="top">
@@ -640,6 +698,8 @@ __PIXEL__
   __BONUS_SECTION__
 
   __TRANSFORM_SECTION__
+
+  __FEEDBACK_SECTION__
 
   <!-- ================= OFERTA ================= -->
   <section id="oferta">
@@ -719,6 +779,108 @@ __FOOTER_SECTION__
     }
     setTimeout(tickLiveCount, 3500 + Math.random() * 3000);
   }
+})();
+
+// countdown timer for the CTA sections' .offer-timer widgets: a single
+// per-page end-timestamp in sessionStorage is the only source of truth,
+// so every instance on the page (however many offer-timer widgets exist)
+// always reads exactly the same remaining time, and a refresh resumes
+// from where it left off instead of restarting at 37:45.
+(function(){
+  var STORAGE_KEY = '__TIMER_KEY__';
+  var DURATION_SECONDS = 37 * 60 + 45;
+  var valueEls = document.querySelectorAll('.offer-timer-value');
+  if (!valueEls.length) return;
+
+  var endAt;
+  try {
+    var saved = sessionStorage.getItem(STORAGE_KEY);
+    endAt = saved ? parseInt(saved, 10) : NaN;
+  } catch (e) { endAt = NaN; }
+  if (!endAt || isNaN(endAt)) {
+    endAt = Date.now() + DURATION_SECONDS * 1000;
+    try { sessionStorage.setItem(STORAGE_KEY, String(endAt)); } catch (e) {}
+  }
+
+  function render(){
+    var remaining = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+    var mm = Math.floor(remaining / 60);
+    var ss = remaining % 60;
+    var text = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+    valueEls.forEach(function(el){ el.textContent = text; });
+    if (remaining <= 0) clearInterval(timerInterval);
+  }
+  render();
+  var timerInterval = setInterval(render, 1000);
+})();
+
+// feedback carousel: a "vitrine" that scrolls itself continuously and
+// smoothly (via scrollLeft on a native overflow-x:auto container, not a
+// CSS transform), pauses on hover/touch/drag and resumes a couple
+// seconds after the visitor lets go. The track holds the 5 real cards
+// followed by one aria-hidden duplicate of the same 5, so the loop point
+// (exactly half of the scrollable width) is seamless.
+(function(){
+  var viewport = document.querySelector('[data-feedback-carousel]');
+  if (!viewport) return;
+  var track = viewport.querySelector('.feedback-track');
+  if (!track) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var loopWidth = track.scrollWidth / 2;
+  window.addEventListener('load', function(){ loopWidth = track.scrollWidth / 2; });
+
+  var paused = false;
+  var resumeTimer = null;
+  var SPEED = 28; // px/second -- a full lap takes roughly 25-45s depending on image count/viewport
+  var lastTs = null;
+
+  function frame(ts){
+    if (!paused && !reduceMotion && loopWidth > 0){
+      if (lastTs != null){
+        var dt = ts - lastTs;
+        viewport.scrollLeft += SPEED * dt / 1000;
+        if (viewport.scrollLeft >= loopWidth){
+          viewport.scrollLeft -= loopWidth;
+        }
+      }
+      lastTs = ts;
+    } else {
+      lastTs = null;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function resumeAfterAWhile(){
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(function(){ paused = false; }, 2500);
+  }
+
+  viewport.addEventListener('mouseenter', function(){ paused = true; clearTimeout(resumeTimer); });
+  viewport.addEventListener('mouseleave', function(){
+    if (!isDragging) { clearTimeout(resumeTimer); paused = false; }
+  });
+  viewport.addEventListener('touchstart', function(){ paused = true; }, { passive: true });
+  viewport.addEventListener('touchend', function(){ paused = true; resumeAfterAWhile(); }, { passive: true });
+  viewport.addEventListener('wheel', function(){ paused = true; resumeAfterAWhile(); }, { passive: true });
+
+  // click-and-drag (desktop mouse / trackpad without native touch scroll)
+  var isDragging = false, dragStartX = 0, dragStartScroll = 0;
+  viewport.addEventListener('mousedown', function(e){
+    isDragging = true; paused = true; clearTimeout(resumeTimer);
+    dragStartX = e.pageX; dragStartScroll = viewport.scrollLeft;
+  });
+  window.addEventListener('mousemove', function(e){
+    if (!isDragging) return;
+    viewport.scrollLeft = dragStartScroll - (e.pageX - dragStartX);
+  });
+  window.addEventListener('mouseup', function(){
+    if (!isDragging) return;
+    isDragging = false;
+    paused = true;
+    resumeAfterAWhile();
+  });
 })();
 </script>
 __GATE_SCRIPT__
