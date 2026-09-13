@@ -120,7 +120,7 @@ PAGES = [
             'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
         ),
         "subhead": "src/subhead-latam.html",
-        "topbar": 'Precio promocional válido solo el día <strong class="topbar-hl">12/09</strong>',
+        "topbar": 'Precio promocional válido solo el día <strong class="topbar-hl">13/09</strong>',
         "viewer_suffix": "viendo esto ahora",
         "hero_cta_text": "¡Quiero mis Moldes Ahora!",
         "hero_cta_note": "Acceso liberado al instante, directo a tu WhatsApp y email.",
@@ -154,7 +154,7 @@ PAGES = [
             'preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q 50 10 100 5"/></svg></span>.'
         ),
         "subhead": "src/subhead-v2.html",
-        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">12/09</strong>',
+        "topbar": 'Valor promocional válido apenas no dia <strong class="topbar-hl">13/09</strong>',
         "viewer_suffix": "assistindo agora",
         "hero_cta_text": "Quero os moldes agora!",
         "hero_cta_note": "Acesso liberado na hora, direto no WhatsApp e no email.",
