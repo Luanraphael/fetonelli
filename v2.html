@@ -546,28 +546,49 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   @media (min-width:1024px){ .feedback-card{width:262px;} }
   @media (prefers-reduced-motion: reduce){ .feedback-viewport{scroll-behavior:auto;} }
 
-  /* ================= TEMPORIZADOR (nas seções de oferta) ================= */
+  /* ================= TEMPORIZADOR (nas seções de oferta) =================
+     painel escuro tipo "display de luxo": borda dourada em movimento
+     (mesma técnica de gradiente padding-box/border-box já usada em
+     .offer-featured/.transform-arrow-badge), glow pulsante muito lento
+     atrás do card, números grandes com brilho -- chamativo, sem virar
+     "cronômetro de afiliado". */
   .offer-timer{
-    display:flex;align-items:center;gap:12px;
-    margin:16px auto 0;padding:11px 18px;max-width:320px;
-    border-radius:var(--radius-md);
-    background:linear-gradient(165deg, #fff 0%, var(--pink-pale) 130%);
-    border:1px solid var(--panel-line-hover);
-    box-shadow:0 16px 38px -22px var(--pink-glow);
+    position:relative;isolation:isolate;
+    margin:18px auto 0;max-width:320px;padding:16px 22px 18px;
+    border-radius:var(--radius-lg);border:2px solid transparent;
+    background:
+      linear-gradient(160deg, #4a0a26 0%, #220515 55%, #160310 100%) padding-box,
+      linear-gradient(115deg, var(--gold), #ffe4a8, var(--pink), var(--gold)) border-box;
+    background-size:auto, 220% auto;
+    box-shadow:0 26px 58px -22px rgba(176,18,90,.6), inset 0 0 0 1px rgba(255,255,255,.05);
+    text-align:center;overflow:hidden;
   }
-  .offer-timer-icon{
-    width:34px;height:34px;flex-shrink:0;border-radius:50%;
-    background:var(--pink-deep);color:#fff;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 10px 22px -10px var(--pink-glow);
+  .offer-timer::after{
+    content:"";position:absolute;inset:-40%;z-index:-1;pointer-events:none;
+    background:radial-gradient(closest-side, rgba(255,45,122,.45), transparent 72%);
+    opacity:.4;
   }
-  .offer-timer-icon .icon{width:16px;height:16px;stroke-width:2;}
-  .offer-timer-body{text-align:left;flex:1;min-width:0;}
-  .offer-timer-label{font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-dim);}
+  @media (prefers-reduced-motion: no-preference){
+    .offer-timer{ animation:timerBorderShine 5s linear infinite; }
+    .offer-timer::after{ animation:timerGlowPulse 3.4s ease-in-out infinite; }
+  }
+  @keyframes timerBorderShine{ to{ background-position:0 0, 220% center; } }
+  @keyframes timerGlowPulse{ 0%,100%{ opacity:.3; } 50%{ opacity:.6; } }
+
+  .offer-timer-label{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    font-family:var(--ff-display);font-weight:800;font-size:.76rem;
+    letter-spacing:.04em;text-transform:uppercase;color:#ffd54a;
+    text-shadow:0 1px 10px rgba(255,213,74,.35);
+  }
+  .offer-timer-label .icon{width:15px;height:15px;color:var(--pink);flex-shrink:0;stroke-width:2.2;}
+
+  .offer-timer-display{margin-top:10px;}
   .offer-timer-value{
-    margin-top:1px;font-family:var(--ff-display);font-weight:800;
-    font-size:1.45rem;letter-spacing:.02em;color:var(--pink-deep);
-    font-variant-numeric:tabular-nums;line-height:1.15;
+    font-family:var(--ff-display);font-weight:800;
+    font-size:clamp(2.1rem,9vw,2.7rem);letter-spacing:.04em;line-height:1;
+    color:#fff;font-variant-numeric:tabular-nums;
+    text-shadow:0 0 24px rgba(255,213,74,.55), 0 0 46px rgba(255,45,122,.3);
   }
 
   /* ================= QUEM SOU EU ================= */
@@ -684,6 +705,7 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle class="icon-solid" cx="8.5" cy="8.5" r="1.4"/><path d="M21 15.5l-5.2-5.2-4 4-2.8-2.8L3 17.5"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.3 15.2c.4.7 1.3 1.1 2.3 1.1 1.5 0 2.7-.8 2.7-1.9 0-2.5-5.4-1-5.4-3.5 0-1.1 1.2-1.9 2.7-1.9 1 0 1.9.4 2.3 1.1"/><path d="M12 7.3v1.1M12 15.6v1.1"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21c-3.5 0-6-2.3-6-5.8 0-2.3 1.2-3.9 2.3-5.5.6 1.6.1 2.6-.5 3.4C9 11 9.6 8.7 9.1 6c1.9 1.2 2.7 3.1 2.5 5.2 1.2-.7 1.8-2 1.7-3.5 1.9 1.7 2.7 4 2.7 6.5C16 18.7 15.5 21 12 21z"/></symbol>
 </svg>
 
 <main id="top">
@@ -1040,10 +1062,9 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       <span class="offer-price-cash">à vista, com todos os bônus</span>
 
       <div class="offer-timer">
-        <span class="offer-timer-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
-        <div class="offer-timer-body">
-          <p class="offer-timer-label">Condição disponível nesta sessão</p>
-          <p class="offer-timer-value">37:45</p>
+        <p class="offer-timer-label"><svg class="icon"><use href="#i-flame"/></svg> Últimas horas desta promoção!</p>
+        <div class="offer-timer-display">
+          <span class="offer-timer-value">37:45</span>
         </div>
       </div>
 
@@ -1084,10 +1105,9 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       <span class="offer-price-cash">à vista, pagamento único</span>
 
       <div class="offer-timer">
-        <span class="offer-timer-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
-        <div class="offer-timer-body">
-          <p class="offer-timer-label">Condição disponível nesta sessão</p>
-          <p class="offer-timer-value">37:45</p>
+        <p class="offer-timer-label"><svg class="icon"><use href="#i-flame"/></svg> Últimas horas desta promoção!</p>
+        <div class="offer-timer-display">
+          <span class="offer-timer-value">37:45</span>
         </div>
       </div>
 
@@ -1170,10 +1190,9 @@ src="https://www.facebook.com/tr?id=956939566696352&ev=PageView&noscript=1"
       <span class="offer-price-cash">à vista, com todos os bônus</span>
 
       <div class="offer-timer">
-        <span class="offer-timer-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
-        <div class="offer-timer-body">
-          <p class="offer-timer-label">Condição disponível nesta sessão</p>
-          <p class="offer-timer-value">37:45</p>
+        <p class="offer-timer-label"><svg class="icon"><use href="#i-flame"/></svg> Últimas horas desta promoção!</p>
+        <div class="offer-timer-display">
+          <span class="offer-timer-value">37:45</span>
         </div>
       </div>
 
