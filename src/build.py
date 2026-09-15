@@ -160,7 +160,7 @@ PAGES = [
         "title": "500 Moldes de Mesa Posta",
         "body_class": "flat",
         "pixel": "src/pixel-b.html",
-        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",  # ticket 19,90 -- also the guarantee-section CTA target
+        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",  # ticket 27,90 -- also the guarantee-section CTA target
         "checkout_url_10": "https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv",
         "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",
         "vsl": "src/vsl-b.html",
@@ -246,7 +246,7 @@ def build_page(page):
     # the guarantee) are separate tokens so each page can show different
     # content in each spot: index.html (LATAM) repeats the same single
     # Premium offer in both; v2.html shows both tiers first, then only
-    # the R$19,90 tier again.
+    # the R$27,90 tier again.
     offer_data = (ROOT / page["offer_block"]).read_text(encoding="utf-8").strip()
     fragment = _inject(fragment, "__OFFER_BLOCK__", offer_data, exactly=1)
 
