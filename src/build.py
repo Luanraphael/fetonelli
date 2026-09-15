@@ -160,9 +160,9 @@ PAGES = [
         "title": "500 Moldes de Mesa Posta",
         "body_class": "flat",
         "pixel": "src/pixel-b.html",
-        "checkout_url": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",  # ticket 27,90 -- also the guarantee-section CTA target
+        "checkout_url": "https://payfast.greenn.com.br/redirect/317007",  # ticket 27,90 -- also the guarantee-section CTA target
         "checkout_url_10": "https://payfast.greenn.com.br/2tbv3by/offer/Xtm4Rv",
-        "checkout_url_19": "https://payfast.greenn.com.br/9tabvy7/offer/NZhZFm?ch_id=143254",
+        "checkout_url_19": "https://payfast.greenn.com.br/redirect/317007",
         "vsl": "src/vsl-b.html",
         "headline": (
             "500 Moldes de Mesa Posta na Tela para "
